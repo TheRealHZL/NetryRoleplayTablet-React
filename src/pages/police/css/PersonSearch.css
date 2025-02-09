@@ -1,0 +1,103 @@
+.person-search-container {
+    padding: 20px;
+    background-color: #1e1e1e;
+    color: #f4f4f4;
+    font-family: "Arial", sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .person-search-header h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  .person-search-header p {
+    font-size: 1rem;
+    color: #bfbfbf;
+  }
+  
+  .person-search-form {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .search-input {
+    flex: 1;
+    padding: 10px 15px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #2e2e2e;
+    color: #f4f4f4;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+  }
+  
+  .search-input::placeholder {
+    color: #a1a1a1;
+  }
+  
+  .search-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .search-button:hover {
+    background-color: #388e3c;
+  }
+  
+  .person-details {
+    background-color: #2e2e2e;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+  
+  .person-details h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+  
+  .details-card p {
+    margin: 8px 0;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .action-button {
+    padding: 10px 15px;
+    font-size: 1rem;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .action-button.edit {
+    background-color: #2196f3;
+  }
+  
+  .action-button.edit:hover {
+    background-color: #1976d2;
+  }
+  
+  .action-button.add-note {
+    background-color: #ff5722;
+  }
+  
+  .action-button.add-note:hover {
+    background-color: #e64a19;
+  }
+  
