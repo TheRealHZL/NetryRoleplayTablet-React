@@ -12,7 +12,9 @@ import ListModule from "./pages/police/Listen";
 import Statistics from "./pages/police/Statistics";
 import ApplicationOverview from "./pages/police/ApplicationOverview";
 /* Ambulance Stuff */
-import AmbulanceDashboard from "./pages/ambulance/Dashboard";
+import AmbulanceDashboard from "./pages/ambulance/MedicDashboard";
+import PatientSearch from "./pages/ambulance/PatientSearch";
+import PatientDetails from "./pages/ambulance/PatientDetails";
 /* Mechaniker Stuff */
 import MechanicDashboard from "./pages/mechanic/Dashboard";
 /* Admin Stuff */
@@ -23,7 +25,7 @@ function App() {
   return (
     <Router>
       <div className="app-container">
-        <Sidebar job="police" /> {/* Sidebar bleibt unabhängig von der Fraktion */}
+        <Sidebar job="ambulance" /> {/* Sidebar bleibt unabhängig von der Fraktion */}
         <div className="main-content">
           <Routes>
               /* Police Stuff */
@@ -39,7 +41,9 @@ function App() {
             <Route path="/police/listen" element={<ListModule />} />
             <Route path="/police/bewerbung" element={<ApplicationOverview />} />
             /* Ambulance Stuff */
-            <Route path="/ambulance/dashboard" element={<AmbulanceDashboard />} />
+            <Route path="/ambulance/medicdashboard" element={<AmbulanceDashboard />} />
+            <Route path="/ambulance/patientserch" element={<PatientSearch />} />
+            <Route path="/ambulance/patientdetails/:id" element={<PatientDetails />} />
             /* Mechaniker Stuff */
             <Route path="/mechanic/dashboard" element={<MechanicDashboard />} />
             /* Admin Stuff */
