@@ -19,7 +19,9 @@ const Sidebar = ({ job }) => {
       { name: "Personensuche", icon: faSearch, route: "/police/search" },
       { name: "Fahrzeugsuche", icon: faFlask, route: "/police/vehicle" },
       { name: "Berichtswesen", icon: faMapMarkerAlt, route: "/police/ReportManagement" },
+      { name: "Listen", icon: faCar, route: "/police/listen" },
       { name: "Statistiken", icon: faChartBar, route: "/police/statistics" },
+      { name: "Bewerbung", icon: faUsers, route: "/police/bewerbung" },
     ],
     ambulance: [
       { name: "Dashboard", icon: faChartBar, route: "/ambulance/dashboard" },

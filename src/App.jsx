@@ -8,7 +8,9 @@ import PersonDetails from "./pages/police/PersonDetails";
 import VehicleSearch from "./pages/police/VehicleSearch";
 import VehicleDetails from "./pages/police/VehicleDetails";
 import ReportManagement from "./pages/police/ReportManagement";
+import ListModule from "./pages/police/Listen";
 import Statistics from "./pages/police/Statistics";
+import ApplicationOverview from "./pages/police/ApplicationOverview";
 /* Ambulance Stuff */
 import AmbulanceDashboard from "./pages/ambulance/Dashboard";
 /* Mechaniker Stuff */
@@ -34,6 +36,8 @@ function App() {
             <Route path="/police/reportmanagement" element={<ReportManagement />} />
             <Route path="/police/statistics" element={<Statistics />} />
             <Route path="/person-details" element={<PersonDetails />} />
+            <Route path="/police/listen" element={<ListModule />} />
+            <Route path="/police/bewerbung" element={<ApplicationOverview />} />
             /* Ambulance Stuff */
             <Route path="/ambulance/dashboard" element={<AmbulanceDashboard />} />
             /* Mechaniker Stuff */
