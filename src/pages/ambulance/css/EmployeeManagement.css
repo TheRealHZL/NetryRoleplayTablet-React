@@ -1,0 +1,200 @@
+/* Grundlegendes Styling */
+.employee-management-container {
+    padding: 20px;
+    background-color: #181a1b;
+    color: #eaeaea;
+    font-family: "Arial", sans-serif;
+    max-width: 1200px;
+    margin: auto;
+  }
+  
+  /* Header Styling */
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .add-employee-btn {
+    padding: 12px 20px;
+    background: #2d89ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+  }
+  
+  .add-employee-btn:hover {
+    background: #1b6bff;
+  }
+  
+  /* Tabellen-Design */
+  .employee-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #222;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 20px;
+  }
+  
+  .employee-table th, .employee-table td {
+    padding: 14px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+  }
+  
+  .employee-table th {
+    background: #2d89ff;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .employee-table tbody tr:hover {
+    background: #292d30;
+  }
+  
+  /* Fortschrittsanzeige */
+  .progress-bar {
+    width: 120px;
+    height: 12px;
+    background: #333;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .progress {
+    height: 100%;
+    background: #2d89ff;
+    text-align: center;
+    color: white;
+    font-size: 12px;
+    line-height: 12px;
+    transition: width 0.5s ease;
+  }
+  
+  /* Detailansicht */
+  .employee-details {
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  }
+  
+  .employee-details h2 {
+    color: #2d89ff;
+    margin-bottom: 10px;
+  }
+  
+  .employee-details p {
+    margin: 5px 0;
+  }
+  
+  /* Listen */
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  ul li {
+    padding: 5px;
+    background: #292d30;
+    border-radius: 6px;
+    margin-bottom: 5px;
+  }
+  
+  /* Tabellen für Einsätze und Berechtigungen */
+  .modules-table, .shifts-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .modules-table th, .modules-table td,
+  .shifts-table th, .shifts-table td {
+    padding: 12px;
+    border-bottom: 1px solid #444;
+    text-align: left;
+  }
+  
+  .modules-table th, .shifts-table th {
+    background: #2d89ff;
+    color: white;
+  }
+  
+  /* Buttons */
+  button {
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+  }
+  
+  button:hover {
+    opacity: 0.8;
+  }
+  
+  .view-button {
+    background: #2d89ff;
+    color: white;
+  }
+  
+  .close-button {
+    background: #ff3b3b;
+    color: white;
+    margin-top: 10px;
+  }
+  
+  /* Modale Fenster */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    background: #222;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+  }
+  
+  .modal input, .modal select, .modal textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    background: #1e1e2f;
+    color: #fff;
+    border: none;
+  }
+  
+  .modal button {
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .modal button:first-child {
+    background: #2d89ff;
+    color: white;
+  }
+  
+  .modal button:last-child {
+    background: #ff3b3b;
+    color: white;
+  }
+  

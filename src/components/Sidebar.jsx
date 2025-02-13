@@ -26,6 +26,10 @@ const Sidebar = ({ job }) => {
     ambulance: [
       { name: "Dashboard", icon: faChartBar, route: "/ambulance/medicdashboard" },
       { name: "Patientenakten", icon: faAmbulance, route: "/ambulance/patientserch" },
+      { name: "Listen", icon: faCar, route: "/ambulance/Listen" },
+      { name: "Knowledgebase", icon: faChartBar, route: "/ambulance/knowledgebase" },
+      { name: "Training", icon: faChartBar, route: "/ambulance/trainingdashboard" },
+      { name: "Mitarbeiter", icon: faChartBar, route: "/ambulance/employee-management" },
     ],
     mechanic: [
       { name: "Dashboard", icon: faChartBar, route: "/mechanic/dashboard" },

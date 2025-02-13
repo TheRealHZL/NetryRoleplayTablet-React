@@ -1,0 +1,108 @@
+.list-container {
+    max-width: 100rem;
+    max-height: 100rem;
+    padding: 20px;
+    background: #414141;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab-button {
+    background: #2a2a3a;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    border: none;
+}
+
+.tab-button.active {
+    background: #4caf50;
+}
+
+.tab-content {
+    padding: 10px;
+}
+
+/* Listen */
+.list-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.list-item {
+    background: #1b1b1b;
+    padding: 8px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+.list-item input {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+}
+
+.add-button {
+    width: 100%;
+    margin-top: 10px;
+    background: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.add-button:hover {
+    background: #45a049;
+}
+
+pre {
+    background: #252525;
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+    color: #ffcc00;
+}
+
+.add-tab {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.add-tab input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+    background: #333;
+    color: white;
+}
+
+.add-tab button {
+    background: #4caf50;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+}
+
+.add-tab button:hover {
+    background: #45a049;
+}

@@ -1,0 +1,53 @@
+.container {
+    padding: 16px;
+}
+
+.tabContainer {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.tab {
+    padding: 8px 12px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.activeTab {
+    background: #ddd;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+
+.th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    background: #f4f4f4;
+}
+
+.td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 8px;
+}
+
+.button {
+    padding: 8px 12px;
+    cursor: pointer;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
