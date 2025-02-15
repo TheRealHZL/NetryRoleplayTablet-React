@@ -1,27 +1,86 @@
+/* Standard UI */
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: transparent !important; /* Sicherstellen, dass der Hintergrund immer transparent ist */
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Standardmäßig alles transparent */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: none !important; /* Verhindert dunklen Hintergrund */
+    overflow: hidden;
+}
+
+body:not(.tablet-open) {
+    background: none !important; /* Falls body eine Farbe bekommt */
+}
+
+/* Falls #root oder ein anderes Element den Hintergrund hat */
+#root, .tablet-overlay {
+    background: none !important;
+}
+
+/* Das Tablet ist standardmäßig nicht sichtbar */
 .tablet-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
+    background: rgba(0, 0, 0, 0.0); /* Komplett transparent */
+    display: none; /* Versteckt das Tablet, wenn es nicht benutzt wird */
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Stellt sicher, dass es über allem liegt */
+    z-index: 1000;
+    transition: opacity 0.3s ease-in-out;
 }
 
-.tablet-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 600px;
-    height: 400px;
+.tablet-overlay {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Tablet wird nur sichtbar, wenn es geöffnet ist */
+body.tablet-open .tablet-overlay {
+    display: flex !important; /* Zeigt das Tablet an */
+    opacity: 1;
+}
+
+/* Verhindert, dass ein schwarzer Hintergrund bleibt */
+body:not(.tablet-open) .tablet-overlay {
+    display: none !important;
+}
+
+/* Tablet Container */
+.tablet-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    width: 80%;
+    height: 80%;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
+/* Inhalt des Tablets */
+.tablet-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Schließen-Button */
 .close-btn {
     position: absolute;
     top: 20px;
