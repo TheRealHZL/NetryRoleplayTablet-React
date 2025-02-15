@@ -1,5 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Sidebar from "./components/Sidebar";
+import Tablet from "./components/Tablet";
 /* Police Stuff */
 import PoliceDashboard from "./pages/police/Dashboard";
 import Leitstelle from "./pages/police/Leitstelle";
@@ -25,13 +27,30 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import "./App.css";
 
 function App() {
+  const [job, setJob] = useState(null);
+
+  useEffect(() => {
+    // Job aus FiveM abrufen
+    fetch(`https://${GetParentResourceName()}/getPlayerJob`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({})
+    })
+    .then(res => res.json())
+    .then(data => {
+      setJob(data.job); // Speichert den Job des Spielers
+    })
+    .catch(err => console.error("Fehler beim Abrufen des Jobs:", err));
+  }, []);
+
   return (
     <Router>
       <div className="app-container">
-        <Sidebar job="police" /> {/* Sidebar bleibt unabhängig von der Fraktion */}
+        <Tablet />
+        {job ? <Sidebar job={job} /> : <Sidebar job="default" />} {/* Sidebar abhängig vom Job */}
         <div className="main-content">
           <Routes>
-              /* Police Stuff */
+              {/* Police Stuff */}
             <Route path="/police/dashboard" element={<PoliceDashboard />} />
             <Route path="/police/leitstelle" element={<Leitstelle />} />
             <Route path="/police/search" element={<PersonSearch />} />
@@ -43,16 +62,16 @@ function App() {
             <Route path="/person-details" element={<PersonDetails />} />
             <Route path="/police/listen" element={<ListModule />} />
             <Route path="/police/bewerbung" element={<ApplicationOverview />} />
-            /* Ambulance Stuff */
+            {/* Ambulance Stuff */}
             <Route path="/ambulance/medicdashboard" element={<AmbulanceDashboard />} />
             <Route path="/ambulance/patientserch" element={<PatientSearch />} />
             <Route path="/ambulance/patientdetails/:id" element={<PatientDetails />} />
             <Route path="/ambulance/knowledgebase" element={<KnowledgeBase />} />
             <Route path="/ambulance/trainingdashboard" element={<TrainingDashboard />} />
             <Route path="/ambulance/employee-management" element={<EmployeeManagement />} />
-            /* Mechaniker Stuff */
+            {/* Mechaniker Stuff */}
             <Route path="/mechanic/dashboard" element={<MechanicDashboard />} />
-            /* Admin Stuff */
+            {/* Admin Stuff */}
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
           </Routes>
         </div>
