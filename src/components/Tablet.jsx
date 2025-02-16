@@ -19,6 +19,7 @@ import KnowledgeBase from "../pages/ambulance/KnowledgeBase";
 import TrainingDashboard from "../pages/ambulance/TrainingDashboard";
 import EmployeeManagement from "../pages/ambulance/EmployeeManagement";
 import MechanicDashboard from "../pages/mechanic/Dashboard";
+import EmployeeManagement from "../pages/mechanic/EmployeeManagement";
 import AdminDashboard from "../pages/admin/Dashboard";
 import Sidebar from "../components/Sidebar";
 
@@ -103,6 +104,10 @@ function Tablet() {
                         
                         {/* Mechaniker */}
                         <Route path="/mechanic/dashboard" element={<MechanicDashboard />} />
+                        <Route path="/mechanic/vehicle" element={<VehicleSearch />} />
+                        <Route path="/mechanic/vehicledetails/:id" element={<VehicleDetails />} />
+                        <Route path="/mechanic/orders" element={<ListModule />} />
+                        <Route path="/mechanic/employee-management" element={<EmployeeManagement />} />
 
                         {/* Admin */}
                         <Route path="/admin/dashboard" element={<AdminDashboard />} />
