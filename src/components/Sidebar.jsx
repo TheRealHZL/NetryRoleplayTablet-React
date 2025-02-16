@@ -35,7 +35,7 @@ const Sidebar = ({ job }) => {
       { name: "Dashboard", icon: faChartBar, route: "/mechanic/dashboard" },
       { name: "Aufträge", icon: faCar, route: "/mechanic/orders" },
     ],
-    admin: [
+    fsa: [
       { name: "Dashboard", icon: faChartBar, route: "/admin/dashboard" },
       { name: "Logs", icon: faFlask, route: "/admin/logs" },
     ],

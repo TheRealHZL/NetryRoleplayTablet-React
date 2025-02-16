@@ -85,9 +85,9 @@ function Tablet() {
                         <Route path="/police/dashboard" element={<PoliceDashboard />} />
                         <Route path="/police/leitstelle" element={<Leitstelle />} />
                         <Route path="/police/search" element={<PersonSearch />} />
-                        <Route path="/police/person/:id" element={<PersonDetails />} />
+                        <Route path="/police/PersonDetails/:id" element={<PersonDetails />} />
                         <Route path="/police/vehicle" element={<VehicleSearch />} />
-                        <Route path="/police/vehicle-details/:id" element={<VehicleDetails />} />
+                        <Route path="/police/vehicledetails/:id" element={<VehicleDetails />} />
                         <Route path="/police/reportmanagement" element={<ReportManagement />} />
                         <Route path="/police/statistics" element={<Statistics />} />
                         <Route path="/police/listen" element={<ListModule />} />

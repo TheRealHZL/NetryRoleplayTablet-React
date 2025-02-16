@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./css/Dashboard.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,12 +11,36 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const PoliceDashboard = () => {
+  const [playerName, setPlayerName] = useState("Lädt...");
+
+  useEffect(() => {
+    // Spielernamen abrufen aus FiveM NUI
+    fetch(`https://${GetParentResourceName()}/getPlayerName`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({})
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("📛 Spieler Vorname:", data.name);
+        setPlayerName(data.name); // Setzt den Namen im UI
+      })
+      .catch((err) => console.error("❌ Fehler beim Abrufen des Namens:", err));
+
+    // Event Listener für NUI-Callback
+    window.addEventListener("message", (event) => {
+      if (event.data.action === "setPlayerName") {
+        setPlayerName(event.data.name);
+      }
+    });
+  }, []);
+
   return (
     <div className="pd-dashboard">
       <header className="pd-dashboard-header">
         <div className="header-welcome">
-          <h1>Willkommen zurück, Officer!</h1>
-          <p>Bleiben Sie informiert und organisiert.</p>
+          <h1>Willkommen zurück, {playerName}!</h1>
+          <p>Bleibe informiert und organisiert.</p>
         </div>
         <div className="header-stats">
           <div className="stat-card">

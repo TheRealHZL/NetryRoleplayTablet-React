@@ -47,7 +47,7 @@
   font-size: 15px;
   font-weight: 500;
   border-radius: 8px;
-  background: #333333;
+  background: #33333300;
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
