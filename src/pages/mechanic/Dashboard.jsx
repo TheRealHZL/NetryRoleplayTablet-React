@@ -1,5 +1,5 @@
 import React from "react";
-import "./Dashboard.css";
+import "./css/Dashboard.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard, faUsers, faLaptop } from "@fortawesome/free-solid-svg-icons";
 

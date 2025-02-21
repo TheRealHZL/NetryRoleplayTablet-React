@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import "./Tablet.css"; 
-
+{/* POLICE */}
 import PoliceDashboard from "../pages/police/Dashboard";
 import Leitstelle from "../pages/police/Leitstelle";
 import PersonSearch from "../pages/police/PersonSearch";
@@ -9,19 +9,26 @@ import PersonDetails from "../pages/police/PersonDetails";
 import VehicleSearch from "../pages/police/VehicleSearch";
 import VehicleDetails from "../pages/police/VehicleDetails";
 import ReportManagement from "../pages/police/ReportManagement";
-import ListModule from "../pages/police/Listen";
 import Statistics from "../pages/police/Statistics";
 import ApplicationOverview from "../pages/police/ApplicationOverview";
+{/* AMBULANCE */}
 import AmbulanceDashboard from "../pages/ambulance/MedicDashboard";
 import PatientSearch from "../pages/ambulance/PatientSearch";
 import PatientDetails from "../pages/ambulance/PatientDetails";
 import KnowledgeBase from "../pages/ambulance/KnowledgeBase";
 import TrainingDashboard from "../pages/ambulance/TrainingDashboard";
 import EmployeeManagement from "../pages/ambulance/EmployeeManagement";
+{/* MECHANIC */}
 import MechanicDashboard from "../pages/mechanic/Dashboard";
-import EmployeeManagement from "../pages/mechanic/EmployeeManagement";
+import MechanicEmployees from "../pages/mechanic/MechanicEmployees";
+
+{/* ADMIN */}
 import AdminDashboard from "../pages/admin/Dashboard";
+import YamlEditor from "../pages/admin/YamlEditor";
 import Sidebar from "../components/Sidebar";
+
+{/* Globale Variablen */}
+import GlobalListModule from "../pages/module/GlobalListModule";
 
 function Tablet() {
     const [isVisible, setIsVisible] = useState(false);
@@ -91,26 +98,27 @@ function Tablet() {
                         <Route path="/police/vehicledetails/:id" element={<VehicleDetails />} />
                         <Route path="/police/reportmanagement" element={<ReportManagement />} />
                         <Route path="/police/statistics" element={<Statistics />} />
-                        <Route path="/police/listen" element={<ListModule />} />
                         <Route path="/police/bewerbung" element={<ApplicationOverview />} />
                         
                         {/* Ambulance */}
                         <Route path="/ambulance/medicdashboard" element={<AmbulanceDashboard />} />
                         <Route path="/ambulance/patientsearch" element={<PatientSearch />} />
                         <Route path="/ambulance/patientdetails/:id" element={<PatientDetails />} />
+                        <Route path="/ambulance/mediclisten" element={<MedicListen />} />
                         <Route path="/ambulance/knowledgebase" element={<KnowledgeBase />} />
                         <Route path="/ambulance/trainingdashboard" element={<TrainingDashboard />} />
                         <Route path="/ambulance/employee-management" element={<EmployeeManagement />} />
                         
                         {/* Mechaniker */}
                         <Route path="/mechanic/dashboard" element={<MechanicDashboard />} />
-                        <Route path="/mechanic/vehicle" element={<VehicleSearch />} />
-                        <Route path="/mechanic/vehicledetails/:id" element={<VehicleDetails />} />
-                        <Route path="/mechanic/orders" element={<ListModule />} />
-                        <Route path="/mechanic/employee-management" element={<EmployeeManagement />} />
+                        <Route path="/mechanic/employee-management" element={<MechanicEmployees />} />
 
                         {/* Admin */}
                         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                        <Route path="/admin/yamleditor" element={<YamlEditor />} />
+
+                        {/* Default */}
+                        <Route path="/module" element={<GlobalListModule />} />
                     </Routes>
                 </div>
             </div>
