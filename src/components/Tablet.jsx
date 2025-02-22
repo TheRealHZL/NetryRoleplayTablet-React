@@ -104,7 +104,6 @@ function Tablet() {
                         <Route path="/ambulance/medicdashboard" element={<AmbulanceDashboard />} />
                         <Route path="/ambulance/patientsearch" element={<PatientSearch />} />
                         <Route path="/ambulance/patientdetails/:id" element={<PatientDetails />} />
-                        <Route path="/ambulance/mediclisten" element={<MedicListen />} />
                         <Route path="/ambulance/knowledgebase" element={<KnowledgeBase />} />
                         <Route path="/ambulance/trainingdashboard" element={<TrainingDashboard />} />
                         <Route path="/ambulance/employee-management" element={<EmployeeManagement />} />
@@ -118,7 +117,7 @@ function Tablet() {
                         <Route path="/admin/yamleditor" element={<YamlEditor />} />
 
                         {/* Default */}
-                        <Route path="/module" element={<GlobalListModule />} />
+                        <Route path="/module/globallistmodule" element={<GlobalListModule />} />
                     </Routes>
                 </div>
             </div>

@@ -18,7 +18,7 @@ const Sidebar = ({ job }) => {
       { name: "Leitstelle", icon: faUsers, route: "/police/leitstelle" },
       { name: "Personensuche", icon: faSearch, route: "/police/search" },
       { name: "Fahrzeugsuche", icon: faFlask, route: "/police/vehicle" },
-      { name: "Listen", icon: faCar, route: "/module/listen" },
+      { name: "Listen", icon: faCar, route: "/module/globallistmodule" },
       { name: "Berichtswesen", icon: faMapMarkerAlt, route: "/police/ReportManagement" },
       { name: "Statistiken", icon: faChartBar, route: "/police/statistics" },
       { name: "Bewerbung", icon: faUsers, route: "/police/bewerbung" },
@@ -26,14 +26,14 @@ const Sidebar = ({ job }) => {
     ambulance: [
       { name: "Dashboard", icon: faChartBar, route: "/ambulance/medicdashboard" },
       { name: "Patientenakten", icon: faAmbulance, route: "/ambulance/PatientSearch" },
-      { name: "Listen", icon: faCar, route: "/module/listen" },
+      { name: "Listen", icon: faCar, route: "/module/globallistmodule" },
       { name: "Knowledgebase", icon: faChartBar, route: "/ambulance/knowledgebase" },
       { name: "Training", icon: faChartBar, route: "/ambulance/trainingdashboard" },
       { name: "Mitarbeiter", icon: faChartBar, route: "/ambulance/employee-management" },
     ],
     mechanic: [
       { name: "Dashboard", icon: faChartBar, route: "/mechanic/dashboard" },
-      { name: "Listen", icon: faCar, route: "/module/listen" },
+      { name: "Listen", icon: faCar, route: "/module/globallistmodule" },
       { name: "Mitarbeiter", icon: faChartBar, route: "/mechanic/employee-management" },
     ],
     fsa: [

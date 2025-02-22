@@ -17,7 +17,7 @@ const GlobalListModule = ({ faction }) => {
 
   const fetchFactionSettings = async () => {
     try {
-      const response = await fetch(`https://resource_name/getFactionSettings`, {
+      const response = await fetch(`https://netry_tablet/getFactionSettings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ faction }),
@@ -33,7 +33,7 @@ const GlobalListModule = ({ faction }) => {
 
   const fetchFactionEntries = async () => {
     try {
-      const response = await fetch(`https://resource_name/getFactionEntries`, {
+      const response = await fetch(`https://netry_tablet/getFactionEntries`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ faction }),
@@ -58,7 +58,7 @@ const GlobalListModule = ({ faction }) => {
   };
 
   const handleBatchSave = async () => {
-    await fetch(`https://resource_name/saveFactionEntry`, {
+    await fetch(`https://netry_tablet/saveFactionEntry`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ faction, data: entries }),
