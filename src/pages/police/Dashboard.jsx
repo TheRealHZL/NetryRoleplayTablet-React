@@ -7,39 +7,60 @@ import {
   faBell,
   faCalendar,
   faMapMarkedAlt,
-  faTasks,
 } from "@fortawesome/free-solid-svg-icons";
 
 const PoliceDashboard = () => {
   const [playerName, setPlayerName] = useState("Lädt...");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Spielernamen abrufen aus FiveM NUI
-    fetch(`https://${GetParentResourceName()}/getPlayerName`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({})
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("📛 Spieler Vorname:", data.name);
-        setPlayerName(data.name); // Setzt den Namen im UI
-      })
-      .catch((err) => console.error("❌ Fehler beim Abrufen des Namens:", err));
+    const fetchPlayerName = async () => {
+      try {
+        const response = await fetch(`https://${GetParentResourceName()}/getPlayerName`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({})
+        });
 
-    // Event Listener für NUI-Callback
-    window.addEventListener("message", (event) => {
+        const data = await response.json();
+        
+        if (data.name) {
+          console.log("📛 Spieler Vorname:", data.name);
+          setPlayerName(data.name);
+        } else {
+          setError("Fehler: Kein Name erhalten");
+        }
+      } catch (err) {
+        console.error("❌ Fehler beim Abrufen des Namens:", err);
+        setError("Verbindung zum Server fehlgeschlagen");
+      }
+    };
+
+    fetchPlayerName();
+
+    // Event Listener für NUI-Callbacks
+    const handleMessage = (event) => {
       if (event.data.action === "setPlayerName") {
         setPlayerName(event.data.name);
       }
-    });
+    };
+
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
   }, []);
 
   return (
     <div className="pd-dashboard">
       <header className="pd-dashboard-header">
         <div className="header-welcome">
-          <h1>Willkommen zurück, {playerName}!</h1>
+          {error ? (
+            <h1 style={{ color: "red" }}>{error}</h1>
+          ) : (
+            <h1>Willkommen zurück, {playerName}!</h1>
+          )}
           <p>Bleibe informiert und organisiert.</p>
         </div>
         <div className="header-stats">

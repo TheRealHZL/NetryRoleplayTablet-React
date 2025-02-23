@@ -29,7 +29,7 @@ import Sidebar from "../components/Sidebar";
 
 {/* Globale Variablen */}
 import GlobalListModule from "../pages/module/GlobalListModule";
-
+import EmployeeList from "../pages/module/GlobalEmployeeList";
 function Tablet() {
     const [isVisible, setIsVisible] = useState(false);
     const [job, setJob] = useState(null);
@@ -118,6 +118,7 @@ function Tablet() {
 
                         {/* Default */}
                         <Route path="/module/globallistmodule" element={<GlobalListModule />} />
+                        <Route path="/module/globalemployeelist" element={<EmployeeList />} />
                     </Routes>
                 </div>
             </div>

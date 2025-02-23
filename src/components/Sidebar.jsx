@@ -20,7 +20,7 @@ const Sidebar = ({ job }) => {
       { name: "Fahrzeugsuche", icon: faFlask, route: "/police/vehicle" },
       { name: "Listen", icon: faCar, route: "/module/globallistmodule" },
       { name: "Berichtswesen", icon: faMapMarkerAlt, route: "/police/ReportManagement" },
-      { name: "Statistiken", icon: faChartBar, route: "/police/statistics" },
+      { name: "Mitarbeiter", icon: faChartBar, route: "/module/globalemployeelist" },
       { name: "Bewerbung", icon: faUsers, route: "/police/bewerbung" },
     ],
     ambulance: [
@@ -29,12 +29,12 @@ const Sidebar = ({ job }) => {
       { name: "Listen", icon: faCar, route: "/module/globallistmodule" },
       { name: "Knowledgebase", icon: faChartBar, route: "/ambulance/knowledgebase" },
       { name: "Training", icon: faChartBar, route: "/ambulance/trainingdashboard" },
-      { name: "Mitarbeiter", icon: faChartBar, route: "/ambulance/employee-management" },
+      { name: "Mitarbeiter", icon: faChartBar, route: "/module/globalemployeelist" },
     ],
     mechanic: [
       { name: "Dashboard", icon: faChartBar, route: "/mechanic/dashboard" },
       { name: "Listen", icon: faCar, route: "/module/globallistmodule" },
-      { name: "Mitarbeiter", icon: faChartBar, route: "/mechanic/employee-management" },
+      { name: "Mitarbeiter", icon: faChartBar, route: "/module/globalemployeelist" },
     ],
     fsa: [
       { name: "Dashboard", icon: faChartBar, route: "/admin/dashboard" },
