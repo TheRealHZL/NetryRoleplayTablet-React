@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./css/Dashboard.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getSpielerName } from "./utils/nui"; // Die Funktion, die den Namen holt
 import {
   faClipboardList,
   faUsers,
@@ -14,29 +15,17 @@ const PoliceDashboard = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchPlayerName = async () => {
+    async function fetchData() {
       try {
-        const response = await fetch(`https://${GetParentResourceName()}/getPlayerName`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({})
-        });
-
-        const data = await response.json();
-        
-        if (data.name) {
-          console.log("📛 Spieler Vorname:", data.name);
-          setPlayerName(data.name);
-        } else {
-          setError("Fehler: Kein Name erhalten");
-        }
+        const name = await getSpielerName();
+        setPlayerName(name);
       } catch (err) {
-        console.error("❌ Fehler beim Abrufen des Namens:", err);
-        setError("Verbindung zum Server fehlgeschlagen");
+        console.error("Fehler beim Laden des Spielernamens:", err);
+        setError("Fehler beim Laden des Namens.");
       }
-    };
+    }
 
-    fetchPlayerName();
+    fetchData();
 
     // Event Listener für NUI-Callbacks
     const handleMessage = (event) => {

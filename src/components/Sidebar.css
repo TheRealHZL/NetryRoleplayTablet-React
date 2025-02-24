@@ -1,13 +1,13 @@
 .sidebar {
   width: 260px;
   height: 100vh;
-  background: #2d2d2d;
-  color: #eaeaea;
+  background: #2C3E50; /* Moderner dunkelblauer Hintergrund */
+  color: #ECF0F1; /* Helles Grau für Text */
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25); /* Subtilerer Schatten */
 }
 
 .logo-container {
@@ -16,18 +16,18 @@
 }
 
 .logo {
-  width: 70px;
-  height: 70px;
-  background: #404040;
-  border-radius: 12px;
+  width: 80px;
+  height: 80px;
+  background: #34495E; /* Dunkelblau, passend zur Sidebar */
+  border-radius: 50%; /* Vollständig rund */
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px;
-  color: #ffffff;
+  font-size: 28px; /* Größere Schrift */
+  color: #FFFFFF;
   font-weight: bold;
   margin-bottom: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .menu {
@@ -39,52 +39,52 @@
 .menu-item {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 10px 15px;
-  margin: 10px 20px;
+  gap: 20px;
+  padding: 12px 20px;
+  margin: 8px 20px;
   text-decoration: none;
-  color: #eaeaea;
-  font-size: 15px;
+  color: inherit; /* Verwendet die Haupttextfarbe */
+  font-size: 16px;
   font-weight: 500;
-  border-radius: 8px;
-  background: #33333300;
-  transition: background 0.3s ease, transform 0.2s ease;
+  border-radius: 10px;
+  background: transparent;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .menu-item:hover {
-  background: #444;
-  transform: translateX(5px);
+  background: #1ABC9C; /* Heller, auffälliger Türkis-Ton */
+  color: #ffffff; /* Weißer Text beim Hover */
+  transform: scale(1.05); /* Leicht vergrößern */
 }
 
 .menu-item .icon {
-  font-size: 20px;
-  color: #eaeaea;
+  font-size: 24px;
 }
 
 .logout {
   width: 100%;
   padding: 20px;
-  background: #333333;
+  background: #34495E; /* Passend zum Logo-Hintergrund */
   text-align: center;
-  border-top: 1px solid #444;
+  border-top: 1px solid #4A6572; /* Dunkelgrau-Blau für den Rand */
 }
 
 .logout-button {
   width: 90%;
-  padding: 12px;
-  background: #e74c3c;
+  padding: 14px;
+  background: #E74C3C; /* Rotes Highlight */
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 15px;
+  border-radius: 10px;
+  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: background 0.3s ease;
 }
 
 .logout-button:hover {
-  background: #c0392b;
-  transform: translateY(-2px);
+  background: #C0392B; /* Dunkleres Rot */
+  transform: scale(1.05); /* Leicht vergrößern */
 }
 
 ul {

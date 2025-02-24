@@ -172,3 +172,44 @@
   font-size: 0.85rem;
   color: #b3b3b3;
 }
+
+.details-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.tab.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.record-card {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 5px 0;
+}
+
+.add-entry-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-entry-form input, .add-entry-form textarea {
+  padding: 10px;
+  width: 100%;
+}
+
+.add-entry-form button {
+  padding: 10px;
+  cursor: pointer;
+  background-color: green;
+  color: white;
+}
