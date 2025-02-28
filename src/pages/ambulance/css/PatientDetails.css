@@ -1,99 +1,144 @@
-/* Grundlegende Container-Stilisierung */
+/* Allgemeine Stile für die gesamte Seite */
 .patient-details-container {
-  max-width: 960px;
-  margin: 20px auto;
+  width: 80%;
+  max-width: 1200px;
+  margin: 30px auto;
   padding: 20px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  color: #333;
-  font-family: 'Arial', sans-serif;
+  background: #1a1a2e;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+  font-family: "Arial", sans-serif;
 }
 
-/* Kopfzeile */
+/* Header Styling */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #0f3460;
 }
 
-header h1 {
+h1 {
   font-size: 24px;
-  color: #0056b3;
+  font-weight: bold;
+  color: #00a8ff;
 }
 
-/* Zurück-Button */
-button {
-  background-color: #007BFF;
+.back-btn {
+  background: #007BFF;
   color: white;
+  padding: 8px 15px;
   border: none;
-  padding: 10px 20px;
-  text-transform: uppercase;
-  font-size: 14px;
   border-radius: 5px;
   cursor: pointer;
-  outline: none;
+  font-weight: bold;
 }
 
-button:hover {
-  background-color: #0056b3;
+.back-btn:hover {
+  background: #0056b3;
 }
 
-/* Sektionen für Daten */
+/* Allgemeine Sektionen */
 section {
-  margin-bottom: 20px;
+  margin-top: 20px;
+  padding: 15px;
+  background: #16213e;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 h2 {
-  color: #0056b3;
-  border-bottom: 2px solid #0056b3;
-  padding-bottom: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #00a8ff;
   margin-bottom: 10px;
+  border-bottom: 2px solid #00a8ff;
+  padding-bottom: 5px;
 }
 
-/* Listen und Einträge */
-.records, .notes, .psychological {
-  background-color: #f8f9fa;
-  padding: 15px;
-  border-radius: 5px;
-}
-
-.record, .note, .psychological-record {
-  background-color: white;
-  padding: 10px;
-  margin-top: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  border-radius: 5px;
-}
-
-/* Text und Starke Elemente */
-p {
+/* Patienten-Informationen */
+.patient-info p {
+  font-size: 16px;
   margin: 5px 0;
-  line-height: 1.6;
+  color: #c4c4c4;
 }
 
 strong {
-  color: #333;
+  color: #ffffff;
 }
 
-textarea {
+/* Medizinische Aufzeichnungen */
+.record, .note, .psychological-record {
+  background: #0f3460;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.record p, .note p, .psychological-record p {
+  font-size: 14px;
+  color: #dcdde1;
+}
+
+/* Notizen hinzufügen */
+.add-note {
+  margin-top: 15px;
+}
+
+.add-note textarea {
   width: 100%;
-  padding: 10px;
-  margin-top: 10px;
+  height: 100px;
+  background: #1e272e;
+  border: 1px solid #00a8ff;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  color: white;
+  padding: 8px;
+  font-size: 14px;
 }
 
-textarea:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+.add-note button {
+  margin-top: 10px;
+  background: #4cd137;
+  color: white;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
 }
 
-/* Laden-Animation */
-.loading {
-  text-align: center;
-  padding: 50px;
-  font-size: 20px;
-  color: #007bff;
+.add-note button:hover {
+  background: #44bd32;
+}
+
+/* Responsives Design */
+@media (max-width: 768px) {
+  .patient-details-container {
+    width: 95%;
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  .back-btn {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+
+  .add-note textarea {
+    height: 80px;
+  }
+
+  .add-note button {
+    font-size: 14px;
+  }
 }

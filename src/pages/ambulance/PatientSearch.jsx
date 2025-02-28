@@ -1,24 +1,33 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // ⬅️ Navigation hinzufügen
 import { sendMedicalNuiMessage } from "./utils/medical_nui";
 import "./css/PatientSearch.css";
 
 const PatientSearch = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [patients, setPatients] = useState([]);
+  const navigate = useNavigate(); // ⬅️ useNavigate Hook für Navigation
 
   useEffect(() => {
     const handleResults = (event) => {
-      setPatients(event.detail);
+      if (!event.data || event.data.type !== "searchResultsEMS") return; // Sicherheitscheck
+      setPatients(event.data.results || []);
     };
 
-    window.addEventListener("patientSearchResultsReceived", handleResults);
+    window.addEventListener("message", handleResults);
     return () => {
-      window.removeEventListener("patientSearchResultsReceived", handleResults);
+      window.removeEventListener("message", handleResults);
     };
   }, []);
 
   const handleSearch = () => {
+    if (!searchQuery.trim()) return; // Keine leeren Suchanfragen
     sendMedicalNuiMessage("searchPatients", { query: searchQuery });
+  };
+
+  // ⬇️ Patienten-Details öffnen bei Klick
+  const viewDetails = (id) => {
+    navigate(`/ambulance/patientdetails/${id}`);
   };
 
   return (
@@ -45,20 +54,24 @@ const PatientSearch = () => {
               <th>Name</th>
               <th>Geburtsdatum</th>
               <th>Blutgruppe</th>
+              <th>Aktionen</th>
             </tr>
           </thead>
           <tbody>
             {patients.map((patient) => (
               <tr key={patient.id}>
                 <td>{patient.firstname} {patient.lastname}</td>
-                <td>{patient.dob}</td>
-                <td>{patient.bloodType}</td>
+                <td>{patient.dob || "Unbekannt"}</td>
+                <td>{patient.bloodType || "Unbekannt"}</td>
+                <td>
+                  <button onClick={() => viewDetails(patient.id)}>Details</button> {/*⬅️ Navigiert zu PatientDetails */}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p>Keine Patienten gefunden.</p>
+        <p className="no-results">🔎 Keine Patienten gefunden.</p>
       )}
     </div>
   );

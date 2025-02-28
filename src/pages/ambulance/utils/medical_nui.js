@@ -4,38 +4,57 @@
  * 📤 Funktion zur Kommunikation mit der NUI (Netry Tablet)
  */
 export async function sendMedicalNuiMessage(event, data = {}) {
-  return fetch(`https://${GetParentResourceName()}/${event}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  })
-    .then((res) => res.json())
-    .catch((err) => console.error("❌ NUI Fetch Error:", err));
+  try {
+    const response = await fetch(`https://${GetParentResourceName()}/${event}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`❌ NUI Fetch Error: Server antwortete mit Status ${response.status}`);
+    }
+
+    const text = await response.text();
+    if (!text.trim()) { // Falls die Antwort leer ist
+      console.warn("⚠️ Leere Antwort von der NUI erhalten.");
+      return [];
+    }
+
+    return JSON.parse(text);
+  } catch (err) {
+    console.error("❌ NUI Fetch Error:", err);
+    return [];
+  }
 }
 
 /**
  * 📌 Event-Listener für NUI-Nachrichten aus der LUA-Seite
  */
 window.addEventListener("message", (event) => {
-  if (event.origin !== window.location.origin) return; // Sicherheitscheck
+  if (!event.data || !event.data.type) return; // Sicherheitscheck
+
+  console.log("📥 NUI Event empfangen:", event.data); // Debugging
 
   const { type, data } = event.data;
 
   switch (type) {
-    case "patientSearchResults":
-      window.dispatchEvent(new CustomEvent("patientSearchResultsReceived", { detail: data.results }));
+    case "searchResultsEMS": 
+    case "searchResultsPolice":
+    case "searchResultsFIB":
+      window.dispatchEvent(new CustomEvent("patientSearchResultsReceived", { detail: data?.results || [] }));
       break;
     case "medicalRecords":
-      window.dispatchEvent(new CustomEvent("medicalRecordsReceived", { detail: data.records }));
+      window.dispatchEvent(new CustomEvent("medicalRecordsReceived", { detail: data?.records || [] }));
       break;
     case "medicalNotes":
-      window.dispatchEvent(new CustomEvent("medicalNotesReceived", { detail: data.records }));
+      window.dispatchEvent(new CustomEvent("medicalNotesReceived", { detail: data?.records || [] }));
       break;
     case "medicalInformation":
-      window.dispatchEvent(new CustomEvent("medicalInformationReceived", { detail: data.records }));
+      window.dispatchEvent(new CustomEvent("medicalInformationReceived", { detail: data?.records || [] }));
       break;
     case "psychologicalRecords":
-      window.dispatchEvent(new CustomEvent("psychologicalRecordsReceived", { detail: data.records }));
+      window.dispatchEvent(new CustomEvent("psychologicalRecordsReceived", { detail: data?.records || [] }));
       break;
     default:
       console.warn("⚠️ Unbekannter NUI-Typ empfangen:", type);
@@ -45,7 +64,7 @@ window.addEventListener("message", (event) => {
 /**
  * 🔎 Patientensuche
  */
-export const searchPatients = (query) => sendMedicalNuiMessage("searchPatients", { query });
+export const searchPatients = (query) => sendMedicalNuiMessage("searchPerson", { query });
 
 /**
  * 📋 Medizinische Akten
