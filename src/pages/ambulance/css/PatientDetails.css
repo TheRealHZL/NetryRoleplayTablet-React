@@ -1,35 +1,99 @@
+/* Grundlegende Container-Stilisierung */
 .patient-details-container {
-    padding: 20px;
-    background-color: #181818;
-    color: #eaeaea;
-  }
-  
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .patient-info, .patient-notes {
-    background: #2c2c3e;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 20px;
-  }
-  
-  .patient-notes ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .patient-notes textarea {
-    width: 100%;
-    height: 80px;
-    margin-top: 10px;
-    padding: 10px;
-    border-radius: 8px;
-    background: #1e1e2f;
-    color: #fff;
-    border: none;
-  }
-  
+  max-width: 960px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  color: #333;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Kopfzeile */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  font-size: 24px;
+  color: #0056b3;
+}
+
+/* Zurück-Button */
+button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  outline: none;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Sektionen für Daten */
+section {
+  margin-bottom: 20px;
+}
+
+h2 {
+  color: #0056b3;
+  border-bottom: 2px solid #0056b3;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+/* Listen und Einträge */
+.records, .notes, .psychological {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.record, .note, .psychological-record {
+  background-color: white;
+  padding: 10px;
+  margin-top: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border-radius: 5px;
+}
+
+/* Text und Starke Elemente */
+p {
+  margin: 5px 0;
+  line-height: 1.6;
+}
+
+strong {
+  color: #333;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+/* Laden-Animation */
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 20px;
+  color: #007bff;
+}

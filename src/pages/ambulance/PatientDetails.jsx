@@ -1,77 +1,115 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./css/PatientDetails.css";
+import {
+  fetchMedicalRecords,
+  createMedicalRecord,
+  fetchMedicalNotes,
+  addMedicalNote,
+  fetchPsychologicalRecords,
+  createPsychologicalRecord,
+  fetchMedicalInformation,
+  saveMedicalInformation
+} from "./utils/medical_nui";
 
 const PatientDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  const [patient, setPatient] = useState(null);
-  const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState("");
+  const [medicalRecords, setMedicalRecords] = useState([]);
+  const [medicalNotes, setMedicalNotes] = useState([]);
+  const [psychologicalRecords, setPsychologicalRecords] = useState([]);
+  const [medicalInformation, setMedicalInformation] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simuliere das Abrufen von Patientendaten (API-Aufruf)
-    const mockPatient = {
-      id,
-      name: "Max Mustermann",
-      dob: "01.01.1985",
-      bloodType: "A+",
-      allergies: "Keine",
-      conditions: "Bluthochdruck",
+    const fetchData = async () => {
+      await fetchMedicalRecords(id);
+      await fetchMedicalNotes(id);
+      await fetchPsychologicalRecords(id);
+      await fetchMedicalInformation(id);
+      setLoading(false);
     };
-    const mockNotes = [
-      { date: "10.02.2025", text: "Patient klagte über Brustschmerzen." },
-      { date: "08.02.2025", text: "Routineuntersuchung durchgeführt." },
-    ];
 
-    setPatient(mockPatient);
-    setNotes(mockNotes);
+    fetchData();
+
+    const handleMessage = (event) => {
+      if (event.origin !== window.location.origin) {
+        // Sicherstellen, dass Nachrichten nur von der vertrauenswürdigen Quelle kommen
+        return;
+      }
+      switch (event.data.event) {
+        case 'sendMedicalRecords':
+          setMedicalRecords(event.data.records);
+          break;
+        case 'sendMedicalNotes':
+          setMedicalNotes(event.data.notes);
+          break;
+        case 'sendPsychologicalRecords':
+          setPsychologicalRecords(event.data.records);
+          break;
+        case 'sendMedicalInformation':
+          setMedicalInformation(event.data.information);
+          break;
+        default:
+          // Keine Aktion
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
   }, [id]);
 
-  const addNote = () => {
-    const updatedNotes = [
-      ...notes,
-      { date: new Date().toLocaleDateString(), text: newNote },
-    ];
-    setNotes(updatedNotes);
-    setNewNote("");
-  };
-
-  if (!patient) {
-    return <div>Lade Patientendetails...</div>;
+  if (loading) {
+    return <div className="loading">Lade Patientendetails...</div>;
   }
 
   return (
     <div className="patient-details-container">
       <header>
-        <h1>Details zu {patient.name}</h1>
+        <h1>Patientendetails: {medicalInformation.name || 'Unbekannt'}</h1>
         <button onClick={() => navigate(-1)}>Zurück</button>
       </header>
-
+      
       <section className="patient-info">
-        <h2>Patienteninformationen</h2>
-        <p><strong>Geburtsdatum:</strong> {patient.dob}</p>
-        <p><strong>Blutgruppe:</strong> {patient.bloodType}</p>
-        <p><strong>Allergien:</strong> {patient.allergies}</p>
-        <p><strong>Vorerkrankungen:</strong> {patient.conditions}</p>
+        <h2>Medizinische Informationen</h2>
+        <p><strong>Medikation:</strong> {medicalInformation.medication || 'Keine'}</p>
+        <p><strong>Dosierung:</strong> {medicalInformation.dosage || 'Keine'}</p>
+        <p><strong>Behandlung:</strong> {medicalInformation.treatment || 'Keine'}</p>
+        <p><strong>Notizen:</strong> {medicalInformation.notes || 'Keine'}</p>
+      </section>
+      
+      <section className="records">
+        <h2>Medizinische Aufzeichnungen</h2>
+        {medicalRecords.map((record, index) => (
+          <div key={index} className="record">
+            <p><strong>Titel:</strong> {record.title}</p>
+            <p><strong>Beschreibung:</strong> {record.description}</p>
+            <p><strong>Diagnose:</strong> {record.diagnosis}</p>
+            <p><strong>Behandlung:</strong> {record.treatment}</p>
+            <p><strong>Verschriebene Medikation:</strong> {record.prescribed_medication}</p>
+          </div>
+        ))}
       </section>
 
-      <section className="patient-notes">
-        <h2>Notizen</h2>
-        <ul>
-          {notes.map((note, index) => (
-            <li key={index}>
-              <strong>{note.date}:</strong> {note.text}
-            </li>
-          ))}
-        </ul>
-        <textarea
-          placeholder="Neue Notiz hinzufügen..."
-          value={newNote}
-          onChange={(e) => setNewNote(e.target.value)}
-        />
-        <button onClick={addNote}>Notiz speichern</button>
+      <section className="notes">
+        <h2>Medizinische Notizen</h2>
+        {medicalNotes.map((note, index) => (
+          <div key={index} className="note">
+            <p><strong>Datum:</strong> {note.date}</p>
+            <p><strong>Notiz:</strong> {note.note}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className="psychological">
+        <h2>Psychologische Aufzeichnungen</h2>
+        {psychologicalRecords.map((record, index) => (
+          <div key={index} className="psychological-record">
+            <p><strong>Diagnose:</strong> {record.diagnosis}</p>
+            <p><strong>Behandlung:</strong> {record.treatment}</p>
+            <p><strong>Risikobewertung:</strong> {record.risk_assessment}</p>
+          </div>
+        ))}
       </section>
     </div>
   );

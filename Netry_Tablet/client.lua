@@ -1,20 +1,22 @@
 ESX = exports["es_extended"]:getSharedObject()
 
+-- 📟 Tablet öffnen & Job abrufen
 RegisterCommand("tablet", function()
-    print("📟 Tablet wird geöffnet") -- Debugging
+    print("📟 Tablet wird geöffnet")
     TriggerServerEvent("tablet:requestPlayerJob")
-    TriggerServerEvent("tablet:")
     SetNuiFocus(true, true)
     SendNUIMessage({
         action = "openTablet"
     })
 end, false)
 
+-- 📟 Tablet schließen
 RegisterNUICallback("closeTablet", function()
     print("📟 Tablet wird geschlossen")
     SetNuiFocus(false, false)
 end)
 
+-- 📌 Spielerjob empfangen
 RegisterNetEvent("tablet:receivePlayerJob")
 AddEventHandler("tablet:receivePlayerJob", function(job)
     print("📌 Job vom Server erhalten:", job)
@@ -35,24 +37,60 @@ RegisterNUICallback("getPlayerJob", function(_, cb)
     end
 end)
 
-RegisterNUICallback("getSpielerName", function(data, cb)
-    TriggerServerEvent("netry_tablet:getSpielerName") -- Server nach Namen fragen
-
-    -- Wenn der Server antwortet, senden wir die Daten an die NUI
+-- 📌 Spielername abrufen
+RegisterNUICallback("getSpielerName", function(_, cb)
+    TriggerServerEvent("netry_tablet:getSpielerName")
     RegisterNetEvent("netry_tablet:sendSpielerName")
     AddEventHandler("netry_tablet:sendSpielerName", function(charName)
-        cb({ name = charName }) -- Antwort an die NUI senden
+        cb({ name = charName })
     end)
 end)
 
+-----------------------------------------
+-- 🔍 DYNAMISCHE PERSONENSUCHE
+-----------------------------------------
 RegisterNUICallback("searchPerson", function(data, cb)
-    TriggerServerEvent("netry_tablet:searchPerson", data.query)
+    local xPlayer = ESX.GetPlayerData()
+
+    if not xPlayer or not xPlayer.job then
+        print("^1[ERROR] Kein Job gefunden für die Personensuche!^0")
+        cb("error")
+        return
+    end
+
+    local job = xPlayer.job.name
+    local callback
+
+    if job == "ambulance" then
+        callback = "sendSearchResultsEMS"
+    elseif job == "police" or job == "doj" then
+        callback = "sendSearchResultsPolice"
+    elseif job == "fib" then
+        callback = "sendSearchResultsFIB"
+    else
+        print("^1[ERROR] Zugriff verweigert: Keine Berechtigung für die Suche!^0")
+        cb("error")
+        return
+    end
+
+    TriggerServerEvent("netry_tablet:searchPerson", data.query, job)
     cb("ok")
 end)
 
-RegisterNetEvent("netry_tablet:sendSearchResults")
-AddEventHandler("netry_tablet:sendSearchResults", function(results)
-    SendNUIMessage({ type = "searchResults", results = results })
+-- 🔍 Event-Handler für verschiedene Fraktionen
+RegisterNetEvent("netry_tablet:sendSearchResultsEMS")
+AddEventHandler("netry_tablet:sendSearchResultsEMS", function(results)
+    SendNUIMessage({ type = "searchResultsEMS", results = results })
+end)
+
+RegisterNetEvent("netry_tablet:sendSearchResultsPolice")
+AddEventHandler("netry_tablet:sendSearchResultsPolice", function(results)
+    SendNUIMessage({ type = "searchResultsPolice", results = results })
+end)
+
+RegisterNetEvent("netry_tablet:sendSearchResultsFIB")
+AddEventHandler("netry_tablet:sendSearchResultsFIB", function(results)
+    SendNUIMessage({ type = "searchResultsFIB", results = results })
 end)
 
 -----------------------------------------
