@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "./css/PatientDetails.css";
 import {
   fetchMedicalRecords,
   createMedicalRecord,
@@ -11,32 +10,32 @@ import {
   fetchMedicalInformation,
   saveMedicalInformation
 } from "./utils/medical_nui";
+import "./css/PatientDetails.css";
 
 const PatientDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   
-  // State für verschiedene Bereiche
+  // State-Management für verschiedene Bereiche
   const [medicalRecords, setMedicalRecords] = useState([]);
   const [medicalNotes, setMedicalNotes] = useState([]);
   const [psychologicalRecords, setPsychologicalRecords] = useState([]);
   const [medicalInformation, setMedicalInformation] = useState({});
-  
   const [loading, setLoading] = useState(true);
-  const [newNote, setNewNote] = useState(""); // Für neue Notizen
+  const [newNote, setNewNote] = useState("");
 
   // Daten abrufen
   useEffect(() => {
     const fetchData = async () => {
-      const medicalInfo = await fetchMedicalInformation(id);
-      const records = await fetchMedicalRecords(id);
-      const notes = await fetchMedicalNotes(id);
+      const medInfo = await fetchMedicalInformation(id);
+      const medRecords = await fetchMedicalRecords(id);
+      const medNotes = await fetchMedicalNotes(id);
       const psychRecords = await fetchPsychologicalRecords(id);
 
-      setMedicalInformation(medicalInfo);
-      setMedicalRecords(records);
-      setMedicalNotes(notes);
-      setPsychologicalRecords(psychRecords);
+      setMedicalInformation(medInfo || {});
+      setMedicalRecords(medRecords || []);
+      setMedicalNotes(medNotes || []);
+      setPsychologicalRecords(psychRecords || []);
       setLoading(false);
     };
 
@@ -44,14 +43,23 @@ const PatientDetails = () => {
 
     // Event-Listener für Echtzeit-Updates
     const handleMessage = (event) => {
-      if (!event.data || !event.data.type) return;
-      
+      if (!event.data || typeof event.data !== "object") return;
+
       switch (event.data.type) {
-        case 'sendMedicalRecords': setMedicalRecords(event.data.records || []); break;
-        case 'sendMedicalNotes': setMedicalNotes(event.data.notes || []); break;
-        case 'sendPsychologicalRecords': setPsychologicalRecords(event.data.records || []); break;
-        case 'sendMedicalInformation': setMedicalInformation(event.data.information || {}); break;
-        default: console.warn("⚠️ Unbekannter Event:", event.data.type);
+        case "sendMedicalRecords":
+          setMedicalRecords(Array.isArray(event.data.records) ? event.data.records : []);
+          break;
+        case "sendMedicalNotes":
+          setMedicalNotes(Array.isArray(event.data.notes) ? event.data.notes : []);
+          break;
+        case "sendMedicalInformation":
+          setMedicalInformation(event.data.information || {});
+          break;
+        case "sendPsychologicalRecords":
+          setPsychologicalRecords(Array.isArray(event.data.records) ? event.data.records : []);
+          break;
+        default:
+          console.warn("⚠️ Unbekannter Event:", event.data.type);
       }
     };
 
@@ -59,12 +67,11 @@ const PatientDetails = () => {
     return () => window.removeEventListener("message", handleMessage);
   }, [id]);
 
-  // Funktion zum Speichern einer neuen Notiz
+  // Notiz hinzufügen
   const handleAddNote = async () => {
     if (!newNote.trim()) return;
-
     await addMedicalNote({ citizenid: id, note: newNote });
-    setNewNote(""); // Eingabefeld leeren
+    setNewNote("");
   };
 
   if (loading) {
@@ -74,61 +81,65 @@ const PatientDetails = () => {
   return (
     <div className="patient-details-container">
       <header>
-        <h1>Patientendetails: {medicalInformation.name || 'Unbekannt'}</h1>
+        <h1>📋 Patientendetails</h1>
         <button className="back-btn" onClick={() => navigate(-1)}>🔙 Zurück</button>
       </header>
-      
-      <section className="patient-info">
-        <h2>📋 Medizinische Informationen</h2>
-        <p><strong>🩺 Medikation:</strong> {medicalInformation.medication || 'Keine'}</p>
-        <p><strong>💊 Dosierung:</strong> {medicalInformation.dosage || 'Keine'}</p>
-        <p><strong>📝 Behandlung:</strong> {medicalInformation.treatment || 'Keine'}</p>
-        <p><strong>📌 Notizen:</strong> {medicalInformation.notes || 'Keine'}</p>
-      </section>
-      
-      <section className="records">
-        <h2>🩺 Medizinische Aufzeichnungen</h2>
-        {medicalRecords.length > 0 ? medicalRecords.map((record, index) => (
-          <div key={index} className="record">
-            <h3>{record.title}</h3>
-            <p><strong>📌 Diagnose:</strong> {record.diagnosis}</p>
-            <p><strong>💊 Behandlung:</strong> {record.treatment}</p>
-            <p><strong>👨‍⚕️ Erstellt von:</strong> {record.created_by || "Unbekannt"}</p>
-          </div>
-        )) : <p>Keine medizinischen Aufzeichnungen gefunden.</p>}
-      </section>
 
+      {/* Persönliche Informationen */}
+      <div className="info-grid">
+        <div className="card">
+          <h2>👤 Personeninformationen</h2>
+          <p><strong>Vorname:</strong> {medicalInformation.firstname || "Unbekannt"}</p>
+          <p><strong>Nachname:</strong> {medicalInformation.lastname || "Unbekannt"}</p>
+          <p><strong>Geschlecht:</strong> {medicalInformation.gender || "Unbekannt"}</p>
+          <p><strong>Größe:</strong> {medicalInformation.height || "Unbekannt"} cm</p>
+        </div>
+
+        <div className="card">
+          <h2>📞 Kontaktdaten</h2>
+          <p><strong>Telefon:</strong> {medicalInformation.phone || "Nicht angegeben"}</p>
+          <p><strong>Email:</strong> {medicalInformation.email || "Nicht angegeben"}</p>
+          <p><strong>Blutgruppe:</strong> {medicalInformation.bloodType || "Unbekannt"}</p>
+        </div>
+      </div>
+
+      {/* Medizinische Notizen */}
       <section className="notes">
         <h2>📝 Medizinische Notizen</h2>
-        {medicalNotes.length > 0 ? medicalNotes.map((note, index) => (
-          <div key={index} className="note">
-            <p><strong>📅 Datum:</strong> {note.date}</p>
-            <p><strong>📌 Notiz:</strong> {note.note}</p>
-            <p><strong>👨‍⚕️ Erstellt von:</strong> {note.created_by || "Unbekannt"}</p>
-          </div>
-        )) : <p>Keine medizinischen Notizen vorhanden.</p>}
+        {medicalNotes.length > 0 ? (
+          medicalNotes.map((note, index) => (
+            <div key={index} className="note">
+              <p><strong>📅 Datum:</strong> {note.date}</p>
+              <p><strong>📌 Notiz:</strong> {note.note}</p>
+              <p><strong>👨‍⚕️ Erstellt von:</strong> {note.created_by || "Unbekannt"}</p>
+            </div>
+          ))
+        ) : (
+          <p>Keine medizinischen Notizen vorhanden.</p>
+        )}
 
-        <div className="add-note">
-          <textarea
-            placeholder="Neue Notiz hinzufügen..."
-            value={newNote}
-            onChange={(e) => setNewNote(e.target.value)}
-          />
-          <button onClick={handleAddNote}>➕ Notiz hinzufügen</button>
-        </div>
+        <textarea
+          placeholder="Neue Notiz hinzufügen..."
+          value={newNote}
+          onChange={(e) => setNewNote(e.target.value)}
+        />
+        <button onClick={handleAddNote}>➕ Notiz hinzufügen</button>
       </section>
 
-      <section className="psychological">
-        <h2>🧠 Psychologische Aufzeichnungen</h2>
-        {psychologicalRecords.length > 0 ? psychologicalRecords.map((record, index) => (
-          <div key={index} className="psychological-record">
-            <p><strong>🧠 Diagnose:</strong> {record.diagnosis}</p>
-            <p><strong>💬 Behandlung:</strong> {record.treatment}</p>
-            <p><strong>⚠️ Risikobewertung:</strong> {record.risk_assessment}</p>
-            <p><strong>👨‍⚕️ Erstellt von:</strong> {record.created_by || "Unbekannt"}</p>
-          </div>
-        )) : <p>Keine psychologischen Aufzeichnungen gefunden.</p>}
+      {/* Medizinische Infos */}
+      <section className="medical-info">
+        <h2>🩺 Medizinische Informationen</h2>
+        <p><strong>Medikation:</strong> {medicalInformation.medication || "Keine"}</p>
+        <p><strong>Dosierung:</strong> {medicalInformation.dosage || "Keine"}</p>
+        <p><strong>Behandlung:</strong> {medicalInformation.treatment || "Keine"}</p>
+        <p><strong>Notizen:</strong> {medicalInformation.notes || "Keine"}</p>
       </section>
+
+      {/* Tabs für Medical Records und Psychological Records */}
+      <div className="tab-container">
+        <button className="tab">📁 Medizinische Aufzeichnungen</button>
+        <button className="tab">🧠 Psychologische Aufzeichnungen</button>
+      </div>
     </div>
   );
 };

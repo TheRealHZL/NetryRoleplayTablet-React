@@ -16,76 +16,71 @@ export async function sendMedicalNuiMessage(event, data = {}) {
     }
 
     const text = await response.text();
-    if (!text.trim()) { // Falls die Antwort leer ist
+    if (!text) {
       console.warn("⚠️ Leere Antwort von der NUI erhalten.");
-      return [];
+      return null;
     }
 
-    return JSON.parse(text);
+    const jsonData = JSON.parse(text);
+    return jsonData;
   } catch (err) {
     console.error("❌ NUI Fetch Error:", err);
-    return [];
+    return null;
   }
 }
 
 /**
- * 📌 Event-Listener für NUI-Nachrichten aus der LUA-Seite
- */
-window.addEventListener("message", (event) => {
-  if (!event.data || !event.data.type) return; // Sicherheitscheck
-
-  console.log("📥 NUI Event empfangen:", event.data); // Debugging
-
-  const { type, data } = event.data;
-
-  switch (type) {
-    case "searchResultsEMS": 
-    case "searchResultsPolice":
-    case "searchResultsFIB":
-      window.dispatchEvent(new CustomEvent("patientSearchResultsReceived", { detail: data?.results || [] }));
-      break;
-    case "medicalRecords":
-      window.dispatchEvent(new CustomEvent("medicalRecordsReceived", { detail: data?.records || [] }));
-      break;
-    case "medicalNotes":
-      window.dispatchEvent(new CustomEvent("medicalNotesReceived", { detail: data?.records || [] }));
-      break;
-    case "medicalInformation":
-      window.dispatchEvent(new CustomEvent("medicalInformationReceived", { detail: data?.records || [] }));
-      break;
-    case "psychologicalRecords":
-      window.dispatchEvent(new CustomEvent("psychologicalRecordsReceived", { detail: data?.records || [] }));
-      break;
-    default:
-      console.warn("⚠️ Unbekannter NUI-Typ empfangen:", type);
-  }
-});
-
-/**
  * 🔎 Patientensuche
  */
-export const searchPatients = (query) => sendMedicalNuiMessage("searchPerson", { query });
+export async function searchPatients(query) {
+  const data = await sendMedicalNuiMessage("searchPatients", { query });
+  return Array.isArray(data) ? data : [];
+}
 
 /**
  * 📋 Medizinische Akten
  */
-export const fetchMedicalRecords = (citizenid) => sendMedicalNuiMessage("getMedicalRecords", { citizenid });
-export const createMedicalRecord = (data) => sendMedicalNuiMessage("createMedicalRecord", data);
+export async function fetchMedicalRecords(citizenid) {
+  const data = await sendMedicalNuiMessage("getMedicalRecords", { citizenid });
+  return Array.isArray(data) ? data : [];
+}
+
+export async function createMedicalRecord(recordData) {
+  return sendMedicalNuiMessage("createMedicalRecord", recordData);
+}
 
 /**
  * 📝 Medizinische Notizen
  */
-export const fetchMedicalNotes = (citizenid) => sendMedicalNuiMessage("getMedicalNotes", { citizenid });
-export const addMedicalNote = (data) => sendMedicalNuiMessage("addMedicalNote", data);
+export async function fetchMedicalNotes(citizenid) {
+  const data = await sendMedicalNuiMessage("getMedicalNotes", { citizenid });
+  return Array.isArray(data) ? data : [];
+}
+
+export async function addMedicalNote(noteData) {
+  return sendMedicalNuiMessage("addMedicalNote", noteData);
+}
 
 /**
  * 🧠 Psychologische Akten
  */
-export const fetchPsychologicalRecords = (citizenid) => sendMedicalNuiMessage("getPsychologicalRecords", { citizenid });
-export const createPsychologicalRecord = (data) => sendMedicalNuiMessage("createPsychologicalRecord", data);
+export async function fetchPsychologicalRecords(citizenid) {
+  const data = await sendMedicalNuiMessage("getPsychologicalRecords", { citizenid });
+  return Array.isArray(data) ? data : [];
+}
+
+export async function createPsychologicalRecord(recordData) {
+  return sendMedicalNuiMessage("createPsychologicalRecord", recordData);
+}
 
 /**
  * 💊 Allgemeine medizinische Informationen
  */
-export const fetchMedicalInformation = (citizenid) => sendMedicalNuiMessage("getMedicalInformation", { citizenid });
-export const saveMedicalInformation = (data) => sendMedicalNuiMessage("saveMedicalInformation", data);
+export async function fetchMedicalInformation(citizenid) {
+  const data = await sendMedicalNuiMessage("getMedicalInformation", { citizenid });
+  return data && typeof data === "object" ? data : {};
+}
+
+export async function saveMedicalInformation(infoData) {
+  return sendMedicalNuiMessage("saveMedicalInformation", infoData);
+}
