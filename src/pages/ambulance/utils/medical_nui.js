@@ -1,5 +1,3 @@
-// utils/medical_nui.js
-
 /**
  * 📤 Funktion zur Kommunikation mit der NUI (Netry Tablet)
  */
@@ -21,8 +19,7 @@ export async function sendMedicalNuiMessage(event, data = {}) {
       return null;
     }
 
-    const jsonData = JSON.parse(text);
-    return jsonData;
+    return JSON.parse(text);
   } catch (err) {
     console.error("❌ NUI Fetch Error:", err);
     return null;
@@ -33,54 +30,31 @@ export async function sendMedicalNuiMessage(event, data = {}) {
  * 🔎 Patientensuche
  */
 export async function searchPatients(query) {
-  const data = await sendMedicalNuiMessage("searchPatients", { query });
-  return Array.isArray(data) ? data : [];
+  return sendMedicalNuiMessage("searchPatients", { query });
 }
 
-/**
- * 📋 Medizinische Akten
- */
-export async function fetchMedicalRecords(citizenid) {
-  const data = await sendMedicalNuiMessage("getMedicalRecords", { citizenid });
-  return Array.isArray(data) ? data : [];
-}
+/** 📋 **Medizinische Akten (CRUD)** */
+export const fetchMedicalRecords = async (citizenid) => sendMedicalNuiMessage("getMedicalRecords", { citizenid }) || [];
+export const createMedicalRecord = async (data) => sendMedicalNuiMessage("createMedicalRecord", data);
+export const deleteMedicalRecord = async (recordId) => sendMedicalNuiMessage("deleteMedicalRecord", { recordId });
 
-export async function createMedicalRecord(recordData) {
-  return sendMedicalNuiMessage("createMedicalRecord", recordData);
-}
+/** 📝 **Medizinische Notizen (CRUD)** */
+export const fetchMedicalNotes = async (citizenid) => sendMedicalNuiMessage("getMedicalNotes", { citizenid }) || [];
+export const addMedicalNote = async (data) => sendMedicalNuiMessage("addMedicalNote", data);
+export const deleteMedicalNote = async (noteId) => sendMedicalNuiMessage("deleteMedicalNote", { noteId });
 
-/**
- * 📝 Medizinische Notizen
- */
-export async function fetchMedicalNotes(citizenid) {
-  const data = await sendMedicalNuiMessage("getMedicalNotes", { citizenid });
-  return Array.isArray(data) ? data : [];
-}
+/** 🧠 **Psychologische Akten (CRUD)** */
+export const fetchPsychologicalRecords = async (citizenid) => sendMedicalNuiMessage("getPsychologicalRecords", { citizenid }) || [];
+export const createPsychologicalRecord = async (data) => sendMedicalNuiMessage("createPsychologicalRecord", data);
+export const deletePsychologicalRecord = async (recordId) => sendMedicalNuiMessage("deletePsychologicalRecord", { recordId });
 
-export async function addMedicalNote(noteData) {
-  return sendMedicalNuiMessage("addMedicalNote", noteData);
-}
+/** 💊 **Allgemeine medizinische Informationen (CRUD)** */
+export const fetchMedicalInformation = async (citizenid) => sendMedicalNuiMessage("getMedicalInformation", { citizenid }) || {};
+export const saveMedicalInformation = async (data) => sendMedicalNuiMessage("saveMedicalInformation", data);
 
-/**
- * 🧠 Psychologische Akten
- */
-export async function fetchPsychologicalRecords(citizenid) {
-  const data = await sendMedicalNuiMessage("getPsychologicalRecords", { citizenid });
-  return Array.isArray(data) ? data : [];
-}
+/** ☎️ **Kontaktinformationen abrufen & speichern (CRUD)** */
+export const fetchContactDetails = async (citizenid) => sendMedicalNuiMessage("getContactDetails", { citizenid }) || {};
+export const saveContactDetails = async (data) => sendMedicalNuiMessage("saveContactDetails", data);
 
-export async function createPsychologicalRecord(recordData) {
-  return sendMedicalNuiMessage("createPsychologicalRecord", recordData);
-}
-
-/**
- * 💊 Allgemeine medizinische Informationen
- */
-export async function fetchMedicalInformation(citizenid) {
-  const data = await sendMedicalNuiMessage("getMedicalInformation", { citizenid });
-  return data && typeof data === "object" ? data : {};
-}
-
-export async function saveMedicalInformation(infoData) {
-  return sendMedicalNuiMessage("saveMedicalInformation", infoData);
-}
+/** 🆔 **Patienten-Informationen abrufen** */
+export const fetchPatientInfo = async (citizenid) => sendMedicalNuiMessage("getPatientInfo", { citizenid }) || {};

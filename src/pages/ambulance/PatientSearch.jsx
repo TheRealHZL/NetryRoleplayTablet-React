@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // ⬅️ Navigation hinzufügen
-import { sendMedicalNuiMessage } from "./utils/medical_nui";
+import { useNavigate } from "react-router-dom"; 
+import { sendMedicalNuiMessage } from "./utils/medical_nui"; // ✅ FIXED IMPORT
 import "./css/PatientSearch.css";
 
 const PatientSearch = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [patients, setPatients] = useState([]);
-  const navigate = useNavigate(); // ⬅️ useNavigate Hook für Navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResults = (event) => {
-      if (!event.data || event.data.type !== "searchResultsEMS") return; // Sicherheitscheck
+      if (!event.data || event.data.type !== "searchResultsEMS") return;
       setPatients(event.data.results || []);
     };
 
@@ -20,12 +20,22 @@ const PatientSearch = () => {
     };
   }, []);
 
-  const handleSearch = () => {
-    if (!searchQuery.trim()) return; // Keine leeren Suchanfragen
-    sendMedicalNuiMessage("searchPatients", { query: searchQuery });
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+    
+    try {
+      const results = await sendMedicalNuiMessage("searchPatients", { query: searchQuery });
+      if (results && Array.isArray(results)) {
+        setPatients(results);
+      } else {
+        setPatients([]);
+      }
+    } catch (error) {
+      console.error("Fehler bei der Suche:", error);
+      setPatients([]);
+    }
   };
 
-  // ⬇️ Patienten-Details öffnen bei Klick
   const viewDetails = (id) => {
     navigate(`/ambulance/patientdetails/${id}`);
   };
@@ -64,7 +74,7 @@ const PatientSearch = () => {
                 <td>{patient.dob || "Unbekannt"}</td>
                 <td>{patient.bloodType || "Unbekannt"}</td>
                 <td>
-                  <button onClick={() => viewDetails(patient.id)}>Details</button> {/*⬅️ Navigiert zu PatientDetails */}
+                  <button onClick={() => viewDetails(patient.id)}>Details</button>
                 </td>
               </tr>
             ))}
