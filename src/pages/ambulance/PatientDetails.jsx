@@ -6,22 +6,18 @@ const PatientDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // ✅ State für alle Daten
-  const [patientInfo, setPatientInfo] = useState({});
+  // State für Daten
   const [medicalRecords, setMedicalRecords] = useState([]);
   const [medicalNotes, setMedicalNotes] = useState([]);
   const [psychologicalRecords, setPsychologicalRecords] = useState([]);
   const [medicalInformation, setMedicalInformation] = useState({});
   const [contactDetails, setContactDetails] = useState({});
   const [loading, setLoading] = useState(true);
-  
-  // ✅ Modals & Eingaben
-  const [newNote, setNewNote] = useState(""); 
+  const [newNote, setNewNote] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedContactDetails, setEditedContactDetails] = useState({});
-  const [activeTab, setActiveTab] = useState("medical");
 
-  // ✅ Funktion für API-Anfragen (NUI-Kommunikation)
+  // Funktion zur Kommunikation mit der NUI
   const sendNuiMessage = async (event, data = {}) => {
     try {
       const response = await fetch(`https://${GetParentResourceName()}/${event}`, {
@@ -30,86 +26,69 @@ const PatientDetails = () => {
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) throw new Error(`Server antwortete mit Status ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`NUI Fetch Error: Server antwortete mit Status ${response.status}`);
+      }
 
       const text = await response.text();
       return text ? JSON.parse(text) : null;
     } catch (err) {
-      console.error("❌ NUI Fetch Error:", err);
+      console.error("NUI Fetch Error:", err);
       return null;
     }
   };
 
-  // ✅ Alle Daten abrufen
+  // Daten beim Mount der Komponente abrufen
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const patient = await sendNuiMessage("getPatientInfo", { citizenid: id });
-        const medicalInfo = await sendNuiMessage("getMedicalInformation", { citizenid: id });
-        const records = await sendNuiMessage("getMedicalRecords", { citizenid: id });
-        const notes = await sendNuiMessage("getMedicalNotes", { citizenid: id });
-        const psychRecords = await sendNuiMessage("getPsychologicalRecords", { citizenid: id });
-        const contact = await sendNuiMessage("getContactDetails", { citizenid: id });
-
-        setPatientInfo(patient ?? {});
-        setMedicalInformation(medicalInfo ?? {});
-        setMedicalRecords(records ?? []);
-        setMedicalNotes(notes ?? []);
-        setPsychologicalRecords(psychRecords ?? []);
-        setContactDetails(contact ?? {});
-        setLoading(false);
-      } catch (error) {
-        console.error("Fehler beim Laden der Patientendaten:", error);
-      }
+      setMedicalInformation(await sendNuiMessage("getMedicalInformation", { citizenid: id }) || {});
+      setMedicalRecords(await sendNuiMessage("getMedicalRecords", { citizenid: id }) || []);
+      setMedicalNotes(await sendNuiMessage("getMedicalNotes", { citizenid: id }) || []);
+      setPsychologicalRecords(await sendNuiMessage("getPsychologicalRecords", { citizenid: id }) || []);
+      setContactDetails(await sendNuiMessage("getContactDetails", { citizenid: id }) || {});
+      setLoading(false);
     };
     fetchData();
   }, [id]);
 
-  // ✅ 📝 Neue Notiz hinzufügen
+  // Funktionen zur Handhabung der Interaktionen
   const handleAddNote = async () => {
     if (!newNote.trim()) return;
-    const newNoteData = { citizenid: id, note: newNote, created_by: "Du" };
-    await sendNuiMessage("addMedicalNote", newNoteData);
-    setMedicalNotes([...medicalNotes, newNoteData]);
+    const addedNote = await sendNuiMessage("addMedicalNote", { citizenid: id, note: newNote });
+    setMedicalNotes([...medicalNotes, addedNote]);
     setNewNote("");
   };
 
-  // ✅ ❌ Notiz löschen
   const handleDeleteNote = async (noteId) => {
     await sendNuiMessage("deleteMedicalNote", { noteId });
     setMedicalNotes(medicalNotes.filter((note) => note.id !== noteId));
   };
 
-  // ✅ 📋 Neue medizinische Aufzeichnung
   const handleAddMedicalRecord = async () => {
     const newRecord = { citizenid: id, title: "Neue Diagnose", description: "Details hier", created_by: "Du" };
-    await sendNuiMessage("createMedicalRecord", newRecord);
-    setMedicalRecords([...medicalRecords, newRecord]);
+    const addedRecord = await sendNuiMessage("createMedicalRecord", newRecord);
+    setMedicalRecords([...medicalRecords, addedRecord]);
   };
 
-  // ✅ ❌ Medizinische Aufzeichnung löschen
   const handleDeleteMedicalRecord = async (recordId) => {
     await sendNuiMessage("deleteMedicalRecord", { recordId });
     setMedicalRecords(medicalRecords.filter((record) => record.id !== recordId));
   };
 
-  // ✅ 🧠 Neue psychologische Aufzeichnung
   const handleAddPsychRecord = async () => {
     const newRecord = { citizenid: id, diagnosis: "Neue Diagnose", treatment: "Behandlung hier", created_by: "Du" };
-    await sendNuiMessage("createPsychologicalRecord", newRecord);
-    setPsychologicalRecords([...psychologicalRecords, newRecord]);
+    const addedRecord = await sendNuiMessage("createPsychologicalRecord", newRecord);
+    setPsychologicalRecords([...psychologicalRecords, addedRecord]);
   };
 
-  // ✅ ❌ Psychologische Aufzeichnung löschen
   const handleDeletePsychRecord = async (recordId) => {
     await sendNuiMessage("deletePsychologicalRecord", { recordId });
     setPsychologicalRecords(psychologicalRecords.filter((record) => record.id !== recordId));
   };
 
-  // ✅ 🖊️ Kontaktinformationen bearbeiten
   const handleSaveContactDetails = async () => {
-    await sendNuiMessage("saveContactDetails", { citizenid: id, ...editedContactDetails });
-    setContactDetails(editedContactDetails);
+    const savedDetails = await sendNuiMessage("saveContactDetails", { citizenid: id, ...editedContactDetails });
+    setContactDetails(savedDetails);
     setIsModalOpen(false);
   };
 
@@ -120,17 +99,17 @@ const PatientDetails = () => {
   return (
     <div className="patient-details-container">
       <header>
-        <h1>Patientendetails: {patientInfo.firstname} {patientInfo.lastname}</h1>
+        <h1>Patientendetails: {medicalInformation.name || "Unbekannt"}</h1>
         <button className="back-btn" onClick={() => navigate(-1)}>🔙 Zurück</button>
       </header>
 
       <div className="info-grid">
         <div className="card">
           <h2>👤 Persönliche Informationen</h2>
-          <p><strong>Name:</strong> {patientInfo.firstname} {patientInfo.lastname}</p>
-          <p><strong>Geburtsdatum:</strong> {patientInfo.dob}</p>
-          <p><strong>Geschlecht:</strong> {patientInfo.gender}</p>
-          <p><strong>Größe:</strong> {patientInfo.height} cm</p>
+          <p><strong>Name:</strong> {medicalInformation.name}</p>
+          <p><strong>Geburtsdatum:</strong> {medicalInformation.dob}</p>
+          <p><strong>Geschlecht:</strong> {medicalInformation.gender}</p>
+          <p><strong>Größe:</strong> {medicalInformation.height} cm</p>
         </div>
         <div className="card">
           <h2>📞 Kontaktdaten <span onClick={() => setIsModalOpen(true)}>🖊️</span></h2>
@@ -152,8 +131,55 @@ const PatientDetails = () => {
         <textarea placeholder="Neue Notiz..." value={newNote} onChange={(e) => setNewNote(e.target.value)} />
         <button onClick={handleAddNote}>➕ Notiz hinzufügen</button>
       </section>
+
+      <section className="medical-info">
+        <h2>💊 Medizinische Informationen</h2>
+        <p><strong>Medikation:</strong> {medicalInformation.medication}</p>
+      </section>
+
+      <div className="tab-container">
+        <button className="tab" onClick={handleAddMedicalRecord}>➕ Medizinische Aufzeichnung</button>
+        <button className="tab" onClick={handleAddPsychRecord}>➕ Psychologische Aufzeichnung</button>
+      </div>
+
+      <section>
+        <h2>🩺 Medizinische Aufzeichnungen</h2>
+        {medicalRecords.map((record) => (
+          <div key={record.id} className="record">
+            <p><strong>Datum:</strong> {record.timestamp}</p>
+            <p><strong>Diagnose:</strong> {record.diagnosis}</p>
+            <p><strong>Behandlung:</strong> {record.treatment}</p>
+            <p><strong>Erstellt von:</strong> {record.created_by}</p>
+            <button onClick={() => handleEditRecord(record.id)}>🖊️ Bearbeiten</button>
+            <button onClick={() => handleDeleteMedicalRecord(record.id)}>❌ Löschen</button>
+          </div>
+        ))}
+      </section>
+
+      <section>
+        <h2>🧠 Psychologische Aufzeichnungen</h2>
+        {psychologicalRecords.map((record) => (
+          <div key={record.id} className="record">
+            <p><strong>Datum:</strong> {record.timestamp}</p>
+            <p><strong>Diagnose:</strong> {record.diagnosis}</p>
+            <p><strong>Behandlung:</strong> {record.treatment}</p>
+            <p><strong>Erstellt von:</strong> {record.created_by}</p>
+            <button onClick={() => handleEditRecord(record.id)}>🖊️ Bearbeiten</button>
+            <button onClick={() => handleDeletePsychRecord(record.id)}>❌ Löschen</button>
+          </div>
+        ))}
+      </section>
+
+      {isModalOpen && (
+        <div className="modal">
+          <h2>📞 Bearbeite Kontaktdaten</h2>
+          <input type="text" placeholder="Telefon" onChange={(e) => setEditedContactDetails({ ...editedContactDetails, phone: e.target.value })} />
+          <button onClick={handleSaveContactDetails}>Speichern</button>
+        </div>
+      )}
     </div>
   );
 };
+
 
 export default PatientDetails;

@@ -36,8 +36,9 @@ const PatientSearch = () => {
     }
   };
 
-  const viewDetails = (id) => {
-    navigate(`/ambulance/patientdetails/${id}`);
+  // ✅ Direktes Weitergeben des Patientendatensatzes zur Detailseite
+  const viewDetails = (patient) => {
+    navigate(`/ambulance/patientdetails/${patient.id}`, { state: { patientData: patient } });
   };
 
   return (
@@ -74,7 +75,7 @@ const PatientSearch = () => {
                 <td>{patient.dob || "Unbekannt"}</td>
                 <td>{patient.bloodType || "Unbekannt"}</td>
                 <td>
-                  <button onClick={() => viewDetails(patient.id)}>Details</button>
+                  <button onClick={() => viewDetails(patient)}>Details</button>
                 </td>
               </tr>
             ))}

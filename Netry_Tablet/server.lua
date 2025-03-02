@@ -8,6 +8,9 @@ if not lib then
     return
 end
 
+local function debugPrint(msg, data)
+    print("^2[DEBUG] " .. msg .. " - " .. json.encode(data))
+end
 
 -- Spielername abrufen mit CitizenID
 RegisterNetEvent("netry_tablet:getSpielerName")
@@ -90,327 +93,311 @@ end)
 -----------------------------------------
 -- 🔍 DYNAMISCHE PERSONENSUCHE
 -----------------------------------------
+---
 RegisterNetEvent("netry_tablet:searchPerson")
-AddEventHandler("netry_tablet:searchPerson", function(query)
+AddEventHandler("netry_tablet:searchPerson", function(query, job)
     local src = source
     local xPlayer = ESX.GetPlayerFromId(src)
-    if not xPlayer then return end
 
-    local job = xPlayer.getJob().name
-    local callback = nil
-
-    if job == "ambulance" then
-        callback = "sendSearchResultsEMS"
-    elseif job == "police" or job == "doj" then
-        callback = "sendSearchResultsPolice"
-    elseif job == "fib" then
-        callback = "sendSearchResultsFIB"
-    elseif job == "mechanic" then
-        callback = "sendSearchResultsMechanic"
-    else
-        print("^1[ERROR] Zugriff verweigert: Keine Berechtigung für die Suche!^0")
+    if not xPlayer or xPlayer.getJob().name ~= job then
+        print("^1[ERROR] Kein Zugriff auf die Personensuche!^0")
         return
     end
 
-    local result = MySQL.query.await("SELECT id, firstname, lastname FROM users WHERE firstname LIKE ? OR lastname LIKE ? OR id = ?", 
-        { "%" .. query .. "%", "%" .. query .. "%", query })
+    local result = MySQL.query.await("SELECT id, firstname, lastname, dateofbirth, bloodType FROM users WHERE firstname LIKE ? OR lastname LIKE ? OR id = ?",
+        { "%" .. query .. "%", "%" .. query .. "%", query }) or {}
 
-    TriggerClientEvent("netry_tablet:" .. callback, src, result or {})
+    print("^2[INFO] Personensuche ausgeführt für:", query, "Ergebnisse:", #result)
+    TriggerClientEvent("netry_tablet:sendSearchResults", src, result)
 end)
+
 
 -----------------------------------------
 -- 🚑 MEDIZINISCHE AKTEN (EMS)
 -----------------------------------------
-RegisterNetEvent("netry_tablet:getMedicalRecords")
-AddEventHandler("netry_tablet:getMedicalRecords", function(citizenid)
+
+RegisterNetEvent("netry_tablet:searchPatients")
+AddEventHandler("netry_tablet:searchPatients", function(query)
     local src = source
     local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "ambulance" then return end
 
-    local records = MySQL.query.await("SELECT * FROM medical_records WHERE citizenid = ?", { citizenid })
-    TriggerClientEvent("netry_tablet:sendMedicalRecords", src, records or {})
+    if not xPlayer or xPlayer.getJob().name ~= "ambulance" then
+        print("^1[ERROR] Kein Zugriff auf die Patientensuche!^0")
+        return
+    end
+
+    local result = MySQL.query.await("SELECT id, firstname, lastname, dateofbirth, bloodType FROM users WHERE firstname LIKE ? OR lastname LIKE ? OR id = ?", 
+        { "%" .. query .. "%", "%" .. query .. "%", query }) or {}
+
+    print("^2[INFO] Patientensuche ausgeführt für:", query, "Ergebnisse:", #result)
+    TriggerClientEvent("netry_tablet:sendSearchResults", src, result)
 end)
 
-RegisterNetEvent("netry_tablet:createMedicalRecord")
-AddEventHandler("netry_tablet:createMedicalRecord", function(data)
-    local src = source
-    local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "ambulance" then return end
 
-    MySQL.insert("INSERT INTO medical_records (citizenid, title, description, diagnosis, treatment, prescribed_medication, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)", 
-        { data.citizenid, data.title, data.description, data.diagnosis, data.treatment, data.prescribed_medication, xPlayer.getName() })
+-- Verbindung zur Datenbank mit oxmysql
+local function fetchFromDatabase(query, params, callback)
+    exports.oxmysql:execute(query, params, function(result)
+        if callback then callback(result) end
+    end)
+end
 
-    TriggerClientEvent("netry_tablet:medicalRecordCreated", src)
+-- API-Endpunkt: Medizinische Informationen aus `users` + `medical_info` abrufen
+ESX.RegisterServerCallback("getMedicalInformation", function(source, cb, data)
+    local citizenid = data.citizenid
+
+    fetchFromDatabase([[
+        SELECT u.firstname, u.lastname, u.dateofbirth AS dob, u.sex AS gender, u.height, 
+               m.medication 
+        FROM users u
+        LEFT JOIN medical_info m ON u.identifier = m.citizenid
+        WHERE u.identifier = ?
+    ]], {citizenid}, function(result)
+        if result and #result > 0 then
+            local info = result[1]
+            info.name = info.firstname .. " " .. info.lastname
+            info.firstname = nil
+            info.lastname = nil
+            cb(info)
+        else
+            cb({})
+        end
+    end)
 end)
+
+-- API-Endpunkt: Medizinische Akten abrufen
+ESX.RegisterServerCallback("getMedicalRecords", function(source, cb, data)
+    fetchFromDatabase("SELECT * FROM medical_records WHERE citizenid = ?", {data.citizenid}, function(result)
+        cb(result or {})
+    end)
+end)
+
+-- 📌 **Callback für medizinische Notizen**
+ESX.RegisterServerCallback("getMedicalNotes", function(source, cb, data)
+    fetchFromDatabase("SELECT * FROM medical_notes WHERE citizenid = ?", {data.citizenid}, function(result)
+        cb(result or {})
+    end)
+end)
+
+-- 📌 **Callback für psychologische Akten**
+ESX.RegisterServerCallback("getPsychologicalRecords", function(source, cb, data)
+    fetchFromDatabase("SELECT * FROM medical_psychological_records WHERE citizenid = ?", {data.citizenid}, function(result)
+        cb(result or {})
+    end)
+end)
+
+-- 📌 **Callback für Kontaktinformationen**
+ESX.RegisterServerCallback("getContactDetails", function(source, cb, data)
+    fetchFromDatabase("SELECT * FROM medical_contact_details WHERE citizenid = ?", {data.citizenid}, function(result)
+        cb(result[1] or {})
+    end)
+end)
+
+ESX = exports["es_extended"]:getSharedObject()
+
+-- 📌 Notiz hinzufügen
+ESX.RegisterServerCallback("netry_tablet:addMedicalNote", function(source, cb, data)
+    local playerName = GetPlayerName(source)
+    exports.oxmysql:execute("INSERT INTO medical_notes (citizenid, note, created_by) VALUES (?, ?, ?)", 
+    {data.citizenid, data.note, playerName}, function()
+        local lastId = exports.oxmysql:executeSync("SELECT LAST_INSERT_ID() AS id")[1].id
+        cb({id = lastId, note = data.note, created_by = playerName})
+    end)
+end)
+
+-- 📌 Notiz löschen
+ESX.RegisterServerCallback("netry_tablet:deleteMedicalNote", function(source, cb, data)
+    exports.oxmysql:execute("DELETE FROM medical_notes WHERE id = ?", {data.noteId}, function()
+        cb(true)
+    end)
+end)
+
+-- 📌 Medizinische Akte hinzufügen
+ESX.RegisterServerCallback("netry_tablet:createMedicalRecord", function(source, cb, data)
+    exports.oxmysql:execute("INSERT INTO medical_records (citizenid, title, description, created_by) VALUES (?, ?, ?, ?)", 
+    {data.citizenid, data.title, data.description, GetPlayerName(source)}, function()
+        cb(true)
+    end)
+end)
+
+-- 📌 Medizinische Akte löschen
+ESX.RegisterServerCallback("netry_tablet:deleteMedicalRecord", function(source, cb, data)
+    exports.oxmysql:execute("DELETE FROM medical_records WHERE id = ?", {data.recordId}, function()
+        cb(true)
+    end)
+end)
+
+-- 📌 Psychologische Akte hinzufügen
+ESX.RegisterServerCallback("netry_tablet:createPsychologicalRecord", function(source, cb, data)
+    exports.oxmysql:execute("INSERT INTO psychological_records (citizenid, diagnosis, treatment, created_by) VALUES (?, ?, ?, ?)", 
+    {data.citizenid, data.diagnosis, data.treatment, GetPlayerName(source)}, function()
+        cb(true)
+    end)
+end)
+
+-- 📌 Psychologische Akte löschen
+ESX.RegisterServerCallback("netry_tablet:deletePsychologicalRecord", function(source, cb, data)
+    exports.oxmysql:execute("DELETE FROM psychological_records WHERE id = ?", {data.recordId}, function()
+        cb(true)
+    end)
+end)
+
+-- 📌 Kontaktinformationen speichern
+ESX.RegisterServerCallback("netry_tablet:updateContactInformation", function(source, cb, data)
+    exports.oxmysql:execute("UPDATE contact_details SET phone = ?, discord = ?, email = ? WHERE citizenid = ?", 
+    {data.phone, data.discord, data.email, data.citizenid}, function()
+        cb(true)
+    end)
+end)
+
 
 -----------------------------------------
--- 📝 MEDIZINISCHE NOTIZEN (EMS)
------------------------------------------
-RegisterNetEvent("netry_tablet:getMedicalNotes")
-AddEventHandler("netry_tablet:getMedicalNotes", function(citizenid)
-    local src = source
-    local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "ambulance" then return end
-
-    local notes = MySQL.query.await("SELECT * FROM medical_notes WHERE citizenid = ?", { citizenid })
-    TriggerClientEvent("netry_tablet:sendMedicalNotes", src, notes or {})
-end)
-
-RegisterNetEvent("netry_tablet:addMedicalNote")
-AddEventHandler("netry_tablet:addMedicalNote", function(data)
-    local src = source
-    local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "ambulance" then return end
-
-    MySQL.insert("INSERT INTO medical_notes (citizenid, note, created_by) VALUES (?, ?, ?)", 
-        { data.citizenid, data.note, xPlayer.getName() })
-
-    TriggerClientEvent("netry_tablet:medicalNoteAdded", src)
-end)
-
------------------------------------------
--- 💊 MEDIZINISCHE INFORMATIONEN (EMS)
------------------------------------------
-RegisterNetEvent("netry_tablet:getMedicalInformation")
-AddEventHandler("netry_tablet:getMedicalInformation", function(citizenid)
-    local src = source
-    local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "ambulance" then return end
-
-    local info = MySQL.query.await("SELECT * FROM medical_information WHERE citizenid = ?", { citizenid })
-    TriggerClientEvent("netry_tablet:sendMedicalInformation", src, info or {})
-end)
-
-RegisterNetEvent("netry_tablet:saveMedicalInformation")
-AddEventHandler("netry_tablet:saveMedicalInformation", function(data)
-    local src = source
-    local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "ambulance" then return end
-
-    MySQL.insert("INSERT INTO medical_information (citizenid, medication, dosage, treatment, notes) VALUES (?, ?, ?, ?, ?)", 
-        { data.citizenid, data.medication, data.dosage, data.treatment, data.notes })
-    
-    TriggerClientEvent("netry_tablet:medicalInformationSaved", src)
-end)
-
------------------------------------------
--- 🧠 PSYCHOLOGISCHE AKTEN (EMS)
------------------------------------------
-RegisterNetEvent("netry_tablet:getPsychologicalRecords")
-AddEventHandler("netry_tablet:getPsychologicalRecords", function(citizenid)
-    local src = source
-    local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "ambulance" then return end
-
-    local records = MySQL.query.await("SELECT * FROM psychological_records WHERE citizenid = ?", { citizenid })
-    TriggerClientEvent("netry_tablet:sendPsychologicalRecords", src, records or {})
-end)
-
-RegisterNetEvent("netry_tablet:createPsychologicalRecord")
-AddEventHandler("netry_tablet:createPsychologicalRecord", function(data)
-    local src = source
-    local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "ambulance" then return end
-
-    MySQL.insert("INSERT INTO psychological_records (citizenid, diagnosis, treatment, risk_assessment, created_by) VALUES (?, ?, ?, ?, ?)", 
-        { data.citizenid, data.diagnosis, data.treatment, data.risk_assessment, xPlayer.getName() })
-
-    TriggerClientEvent("netry_tablet:psychologicalRecordCreated", src)
-end)
-
------------------------------------------
--- 📝 POLIZEI NOTIZEN
+-- 📝 POLIZEI NOTIZEN (PD, DOJ)
 -----------------------------------------
 
 RegisterNetEvent("netry_tablet:getPoliceRecords")
 AddEventHandler("netry_tablet:getPoliceRecords", function(citizenid)
     local src = source
     local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "police" and xPlayer.getJob().name ~= "doj" then return end
+    if not xPlayer or (xPlayer.getJob().name ~= "police" and xPlayer.getJob().name ~= "doj") then return end
 
-    local records = MySQL.query.await("SELECT * FROM police_and_justice_records WHERE citizenid = ?", { citizenid })
-    TriggerClientEvent("netry_tablet:sendPoliceRecords", src, records or {})
+    local records = MySQL.query.await("SELECT * FROM police_and_justice_records WHERE citizenid = ?", { citizenid }) or {}
+    TriggerClientEvent("netry_tablet:sendPoliceRecords", src, records)
 end)
 
 RegisterNetEvent("netry_tablet:createPoliceRecord")
 AddEventHandler("netry_tablet:createPoliceRecord", function(data)
     local src = source
     local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "police" and xPlayer.getJob().name ~= "doj" then return end
+    if not xPlayer or (xPlayer.getJob().name ~= "police" and xPlayer.getJob().name ~= "doj") then return end
 
     MySQL.insert("INSERT INTO police_and_justice_records (citizenid, title, description, offense, penalty, officer, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)", 
-        { data.citizenid, data.title, data.description, data.offense, data.penalty, xPlayer.getName(), xPlayer.getName() })
-
-    TriggerClientEvent("netry_tablet:policeRecordCreated", src)
+        { data.citizenid, data.title, data.description, data.offense, data.penalty, xPlayer.getName(), xPlayer.getName() },
+        function(insertId)
+            if insertId then
+                TriggerClientEvent("netry_tablet:policeRecordCreated", src, insertId)
+            end
+        end
+    )
 end)
 
 RegisterNetEvent("netry_tablet:deletePoliceRecord")
 AddEventHandler("netry_tablet:deletePoliceRecord", function(recordId)
     local src = source
-    MySQL.execute("DELETE FROM police_and_justice_records WHERE id = ?", { recordId })
-    TriggerClientEvent("netry_tablet:policeRecordDeleted", src)
+    MySQL.execute("DELETE FROM police_and_justice_records WHERE id = ?", { recordId },
+        function(rowsAffected)
+            if rowsAffected > 0 then
+                TriggerClientEvent("netry_tablet:policeRecordDeleted", src)
+            end
+        end
+    )
 end)
 
-RegisterNetEvent("netry_tablet:getNegotiations")
-AddEventHandler("netry_tablet:getNegotiations", function()
-    local src = source
-    local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "police" and xPlayer.getJob().name ~= "doj" then return end
-
-    local negotiations = MySQL.query.await("SELECT * FROM negotiations")
-    TriggerClientEvent("netry_tablet:sendNegotiations", src, negotiations or {})
-end)
-
-RegisterNetEvent("netry_tablet:createNegotiation")
-AddEventHandler("netry_tablet:createNegotiation", function(data)
-    local src = source
-    local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "police" and xPlayer.getJob().nam
-
-    MySQL.insert("INSERT INTO negotiations (citizenid, title, description, created_by) VALUES (?, ?, ?, ?)",
-    { data.citizenid, data.title, data.description, xPlayer.getName() })
-    TriggerClientEvent("netry_tablet:negotiationCreated", src)
-    end)
-
-RegisterNetEvent("netry_tablet:deleteNegotiation")
-AddEventHandler("netry_tablet:deleteNegotiation", function(negotiationId)
-    local src = source
-    MySQL.execute("DELETE FROM negotiations WHERE id = ?", { negotiationId })
-    TriggerClientEvent("netry_tablet:negotiationDeleted", src)
-end)
-
-RegisterNetEvent("netry_tablet:saveNegotiation")
-AddEventHandler("netry_tablet:saveNegotiation", function(data)
-    local src = source
-    MySQL.update("UPDATE negotiations SET title = ?, description = ? WHERE id = ?", { data.title, data.description, data.id })
-    TriggerClientEvent("netry_tablet:negotiationSaved", src)
-end)
+-----------------------------------------
+-- 📝 STRAFENKATALOG (PD, DOJ)
+-----------------------------------------
 
 RegisterNetEvent("netry_tablet:getPenaltyCatalog")
 AddEventHandler("netry_tablet:getPenaltyCatalog", function()
     local src = source
     local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "police" and xPlayer.getJob().name ~= "doj" then return end
-    local penaltyCatalog = MySQL.query.await("SELECT * FROM penalty_catalog")
-    TriggerClientEvent("netry_tablet:sendPenaltyCatalog", src, penaltyCatalog or {})
+    if not xPlayer or (xPlayer.getJob().name ~= "police" and xPlayer.getJob().name ~= "doj") then return end
+
+    local penaltyCatalog = MySQL.query.await("SELECT * FROM penalty_catalog") or {}
+    TriggerClientEvent("netry_tablet:sendPenaltyCatalog", src, penaltyCatalog)
 end)
 
 RegisterNetEvent("netry_tablet:modifiePenaltyCatalog")
 AddEventHandler("netry_tablet:modifiePenaltyCatalog", function(data)
     local src = source
     local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "police" and xPlayer.getJob().name ~= "doj" then return end
-    MySQL.update("UPDATE penalty_catalog SET title = ?, description = ?, penalty = ? WHERE id = ?", { data.title, data.description, data.penalty, data.id })
-    TriggerClientEvent("netry_tablet:penaltyCatalogModified", src)
+    if not xPlayer or (xPlayer.getJob().name ~= "police" and xPlayer.getJob().name ~= "doj") then return end
+
+    MySQL.update("UPDATE penalty_catalog SET title = ?, description = ?, penalty = ? WHERE id = ?", 
+        { data.title, data.description, data.penalty, data.id },
+        function(rowsAffected)
+            if rowsAffected > 0 then
+                TriggerClientEvent("netry_tablet:penaltyCatalogModified", src)
+            end
+        end
+    )
 end)
 
 RegisterNetEvent("netry_tablet:deletEntryFromPenaltyCatalog")
 AddEventHandler("netry_tablet:deletEntryFromPenaltyCatalog", function(id)
     local src = source
-    MySQL.execute("DELETE FROM penalty_catalog WHERE id = ?", { id })
-    TriggerClientEvent("netry_tablet:penaltyCatalogEntryDeleted", src)
+    MySQL.execute("DELETE FROM penalty_catalog WHERE id = ?", { id },
+        function(rowsAffected)
+            if rowsAffected > 0 then
+                TriggerClientEvent("netry_tablet:penaltyCatalogEntryDeleted", src)
+            end
+        end
+    )
 end)
 
-----------------------------------------
--- Mechanic Stuff
-----------------------------------------
+-----------------------------------------
+-- 🛠️ MECHANIC STUFF (Fahrzeug-Modifikationen & Notizen)
+-----------------------------------------
 
 RegisterNetEvent("netry_tablet:getMechanicRecords")
 AddEventHandler("netry_tablet:getMechanicRecords", function()
     local src = source
     local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "mechanic" then return end
-    local mechanicRecords = MySQL.query.await("SELECT * FROM mechanic_records")
-    TriggerClientEvent("netry_tablet:sendMechanicRecords", src, mechanicRecords or {})
+    if not xPlayer or xPlayer.getJob().name ~= "mechanic" then return end
+
+    local mechanicRecords = MySQL.query.await("SELECT * FROM mechanic_records") or {}
+    TriggerClientEvent("netry_tablet:sendMechanicRecords", src, mechanicRecords)
 end)
 
 RegisterNetEvent("netry_tablet:createMechanicRecord")
 AddEventHandler("netry_tablet:createMechanicRecord", function(data)
     local src = source
     local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "mechanic" then return end
+    if not xPlayer or xPlayer.getJob().name ~= "mechanic" then return end
+
     MySQL.insert("INSERT INTO mechanic_records (citizenid, title, description, vehicle, created_by) VALUES (?, ?, ?, ?, ?)",
-    { data.citizenid, data.title, data.description, data.vehicle, xPlayer.getName() })
-    TriggerClientEvent("netry_tablet:mechanicRecordCreated", src)
+        { data.citizenid, data.title, data.description, data.vehicle, xPlayer.getName() },
+        function(insertId)
+            if insertId then
+                TriggerClientEvent("netry_tablet:mechanicRecordCreated", src, insertId)
+            end
+        end
+    )
 end)
 
 RegisterNetEvent("netry_tablet:deleteMechanicRecord")
 AddEventHandler("netry_tablet:deleteMechanicRecord", function(recordId)
     local src = source
-    MySQL.execute("DELETE FROM mechanic_records WHERE id = ?", { recordId })
-    TriggerClientEvent("netry_tablet:mechanicRecordDeleted", src)
-end)
-
-RegisterNetEvent("netry_tablet:saveMechanicRecord")
-AddEventHandler("netry_tablet:saveMechanicRecord", function(data)
-    local src = source
-    MySQL.update("UPDATE mechanic_records SET title = ?, description = ? WHERE id = ?", { data.title, data.description, data.id })
-    TriggerClientEvent("netry_tablet:mechanicRecordSaved", src)
+    MySQL.execute("DELETE FROM mechanic_records WHERE id = ?", { recordId },
+        function(rowsAffected)
+            if rowsAffected > 0 then
+                TriggerClientEvent("netry_tablet:mechanicRecordDeleted", src)
+            end
+        end
+    )
 end)
 
 RegisterNetEvent("netry_tablet:getVehicleModifications")
 AddEventHandler("netry_tablet:getVehicleModifications", function(citizenid)
     local src = source
     local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "mechanic" then return end
-    local vehicleModifications = MySQL.query.await("SELECT * FROM vehicle_modifications WHERE citizenid = ?", { citizenid })
-    TriggerClientEvent("netry_tablet:sendVehicleModifications", src, vehicleModifications or {})
+    if not xPlayer or xPlayer.getJob().name ~= "mechanic" then return end
+
+    local vehicleModifications = MySQL.query.await("SELECT * FROM vehicle_modifications WHERE citizenid = ?", { citizenid }) or {}
+    TriggerClientEvent("netry_tablet:sendVehicleModifications", src, vehicleModifications)
 end)
 
 RegisterNetEvent("netry_tablet:createVehicleModification")
 AddEventHandler("netry_tablet:createVehicleModification", function(data)
     local src = source
     local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "mechanic" then return end
+    if not xPlayer or xPlayer.getJob().name ~= "mechanic" then return end
+
     MySQL.insert("INSERT INTO vehicle_modifications (citizenid, vehicle, modification, created_by) VALUES (?, ?, ?, ?)",
-    { data.citizenid, data.vehicle, data.modification, xPlayer.getName() })
-    TriggerClientEvent("netry_tablet:vehicleModificationCreated", src)
+        { data.citizenid, data.vehicle, data.modification, xPlayer.getName() },
+        function(insertId)
+            if insertId then
+                TriggerClientEvent("netry_tablet:vehicleModificationCreated", src, insertId)
+            end
+        end
+    )
 end)
-
-RegisterNetEvent("netry_tablet:deleteVehicleModification")
-AddEventHandler("netry_tablet:deleteVehicleModification", function(modificationId)
-    local src = source
-    MySQL.execute("DELETE FROM vehicle_modifications WHERE id = ?", { modificationId })
-    TriggerClientEvent("netry_tablet:vehicleModificationDeleted", src)
-end)
-
-RegisterNetEvent("netry_tablet:saveVehicleModification")
-AddEventHandler("netry_tablet:saveVehicleModification", function(data)
-    local src = source
-    MySQL.update("UPDATE vehicle_modifications SET vehicle = ?, modification = ? WHERE id = ?", { data.vehicle, data.modification, data.id })
-    TriggerClientEvent("netry_tablet:vehicleModificationSaved", src)
-end)
-
-RegisterNetEvent("netry_tablet:getVehicleNotes")
-AddEventHandler("netry_tablet:getVehicleNotes", function(citizenid)
-    local src = source
-    local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "mechanic" then return end
-    local vehicleNotes = MySQL.query.await("SELECT * FROM vehicle_notes WHERE citizenid = ?", { citizenid })
-    TriggerClientEvent("netry_tablet:sendVehicleNotes", src, vehicleNotes or {})
-end)
-
-RegisterNetEvent("netry_tablet:createVehicleNote")
-AddEventHandler("netry_tablet:createVehicleNote", function(data)
-    local src = source
-    local xPlayer = ESX.GetPlayerFromId(src)
-    if xPlayer.getJob().name ~= "mechanic" then return end
-    MySQL.insert("INSERT INTO vehicle_notes (citizenid, vehicle, note, created_by) VALUES (?, ?, ?, ?)",
-    { data.citizenid, data.vehicle, data.note, xPlayer.getName() })
-    TriggerClientEvent("netry_tablet:vehicleNoteCreated", src)
-end)
-
-RegisterNetEvent("netry_tablet:deleteVehicleNote")
-AddEventHandler("netry_tablet:deleteVehicleNote", function(noteId)
-    local src = source
-    MySQL.execute("DELETE FROM vehicle_notes WHERE id = ?", { noteId })
-    TriggerClientEvent("netry_tablet:vehicleNoteDeleted", src)
-end)
-
-RegisterNetEvent("netry_tablet:saveVehicleNote")
-AddEventHandler("netry_tablet:saveVehicleNote", function(data)
-    local src = source
-    MySQL.update("UPDATE vehicle_notes SET vehicle = ?, note = ? WHERE id = ?", { data.vehicle, data.note, data.id })
-    TriggerClientEvent("netry_tablet:vehicleNoteSaved", src)
-end)
-
