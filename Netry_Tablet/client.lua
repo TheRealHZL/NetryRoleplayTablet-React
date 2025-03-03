@@ -87,40 +87,11 @@ AddEventHandler("netry_tablet:sendSearchResults", function(results)
 end)
 
 
-RegisterNetEvent("netry_tablet:sendSearchResultsPolice")
-AddEventHandler("netry_tablet:sendSearchResultsPolice", function(results)
-    SendNUIMessage({ type = "searchResultsPolice", results = results })
-end)
-
-RegisterNetEvent("netry_tablet:sendSearchResultsFIB")
-AddEventHandler("netry_tablet:sendSearchResultsFIB", function(results)
-    SendNUIMessage({ type = "searchResultsFIB", results = results })
-end)
-
 RegisterNUICallback("searchPatients", function(data, cb)
     TriggerServerEvent("netry_tablet:searchPatients", data.query)
     cb("ok")
 end)
 
------------------------------------------
--- 🚔 POLIZEI- UND JUSTIZAKTEN (PD, DOJ)
------------------------------------------
-
-
-RegisterNUICallback("getPoliceRecords", function(data, cb)
-    TriggerServerEvent("netry_tablet:getPoliceRecords", data.citizenid)
-    cb("ok")
-end)
-
-RegisterNUICallback("createPoliceRecord", function(data, cb)
-    TriggerServerEvent("netry_tablet:createPoliceRecord", data)
-    cb("ok")
-end)
-
-RegisterNetEvent("netry_tablet:sendPoliceRecords")
-AddEventHandler("netry_tablet:sendPoliceRecords", function(records)
-    SendNUIMessage({ type = "policeRecords", records = records })
-end)
 
 
 local function fetchServerData(eventName, data, cb)
@@ -226,4 +197,286 @@ RegisterNUICallback("saveContactDetails", function(data, cb)
     })
 end)
 
+--------------------------------
+--- Police Stuff ---
+--------------------------------
+
+-- Police Searche
+RegisterNetEvent("netry_tablet:sendSearchResults")
+AddEventHandler("netry_tablet:sendSearchResults", function(results)
+    print("^2[INFO] Suchergebnisse empfangen:", json.encode(results))
+    SendNUIMessage({ type = "searchResultsPolice", results = results })
+end)
+
+
+-- Police Records
+
+RegisterNUICallback("getPoliceRecords", function(data, cb)
+    ESX.TriggerServerCallback("getPoliceRecords", function(result)
+        cb(result or {})
+    end, { citizenid = data.citizenid })
+end)
+
+-- Police Notes
+
+RegisterNUICallback("getPoliceNotes", function(data, cb)
+    ESX.TriggerServerCallback("getPoliceNotes", function(result)
+        cb(result or {})
+    end, { citizenid = data.citizenid })
+end)
+
+-- Police Notes Edit
+
+RegisterNUICallback("editPoliceNote", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:editPoliceNote", function(success)
+        cb(success)
+    end, { noteId = data.noteId, note = data.note })
+end)
+
+-- Police Notes Delete
+
+RegisterNUICallback("deletePoliceNote", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:deletePoliceNote", function(success)
+        cb(success)
+    end, { noteId = data.noteId })
+end)
+
+-- Police Contact Details
+
+RegisterNUICallback("getPoliceContactDetails", function(data, cb)
+    ESX.TriggerServerCallback("getPoliceContactDetails", function(result)
+        cb(result or {})
+    end, { citizenid = data.citizenid })
+end)
+
+-- Policce Contact Details Save 
+
+RegisterNUICallback("savePoliceContactDetails", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:updatePoliceContactDetails", function(success)
+        cb(success)
+    end, {
+        citizenid = data.citizenid,
+        phone = data.phone,
+        discord = data.discord,
+        email = data.email
+    })
+end)
+
+-- Police Record Create
+
+RegisterNUICallback("createPoliceRecord", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:createPoliceRecord", function(success)
+        cb(success)
+    end, {
+        citizenid = data.citizenid,
+        title = data.title,
+        description = data.description,
+        created_by = GetPlayerName(PlayerId())
+    })
+end)
+
+-- Police Record Edit
+
+RegisterNUICallback("editPoliceRecord", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:editPoliceRecord", function(success)
+        cb(success)
+    end, { recordId = data.recordId, title = data.title, description = data.description })
+end)
+
+-- Police Record Delete
+
+RegisterNUICallback("deletePoliceRecord", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:deletePoliceRecord", function(success)
+        cb(success)
+    end, { recordId = data.recordId })
+end)
+
+
+-- Police Justice Records Create
+
+RegisterNUICallback("createJusticeRecord", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:createJusticeRecord", function(success)
+        cb(success)
+    end, {
+        citizenid = data.citizenid,
+        title = data.title,
+        description = data.description,
+        created_by = GetPlayerName(PlayerId())
+    })
+end)
+
+-- Police Justice Record Edit
+
+RegisterNUICallback("editJusticeRecord", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:editJusticeRecord", function(success)
+        cb(success)
+    end, { recordId = data.recordId, title = data.title, description = data.description })
+end)
+
+-- Police Justice Record Delete
+
+RegisterNUICallback("deleteJusticeRecord", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:deleteJusticeRecord", function(success)
+        cb(success)
+    end, { recordId = data.recordId })
+end)
+
+
+
+--------------------------------
+--- Justice Stuff ---
+--------------------------------
+
+-- Justice Searche
+RegisterNetEvent("netry_tablet:sendSearchResultsJustice")
+AddEventHandler("netry_tablet:sendSearchResultsJustice", function(results)
+    print("^2[INFO] Suchergebnisse empfangen:", json.encode(results))
+    SendNUIMessage({ type = "searchResultsJustice", results = results })
+end)
+
+-- Justice Records
+
+RegisterNUICallback("getJusticeRecords", function(data, cb)
+    ESX.TriggerServerCallback("getJusticeRecords", function(result)
+        cb(result or {})
+    end, { citizenid = data.citizenid })
+end)
+
+-- Justice Notes
+
+RegisterNUICallback("getJusticeNotes", function(data, cb)
+    ESX.TriggerServerCallback("getJusticeNotes", function(result)
+        cb(result or {})
+    end, { citizenid = data.citizenid })
+end)
+
+-- Justice Notes Create
+
+RegisterNUICallback("createJusticeNote", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:createJusticeNote", function(success)
+        cb(success)
+    end, {
+        citizenid = data.citizenid,
+        note = data.note,
+        created_by = GetPlayerName(PlayerId())
+    })
+end)
+
+-- Justice Notes Edit
+
+RegisterNUICallback("editJusticeNote", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:editJusticeNote", function(success)
+        cb(success)
+    end, { noteId = data.noteId, note = data.note })
+end)
+
+-- Justice Notes Delete
+
+RegisterNUICallback("deleteJusticeNote", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:deleteJusticeNote", function(success)
+        cb(success)
+    end, { noteId = data.noteId })
+end)
+
+-- Justice Contact Details
+
+RegisterNUICallback("getJusticeContactDetails", function(data, cb)
+    ESX.TriggerServerCallback("getJusticeContactDetails", function(result)
+        cb(result or {})
+    end, { citizenid = data.citizenid })
+end)
+
+
+--------------------------------
+--- Mechanic Stuff ---
+--------------------------------
+
+-- Mechanic Searche
+RegisterNetEvent("netry_tablet:sendSearchResultsMechanic")
+AddEventHandler("netry_tablet:sendSearchResultsMechanic", function(results)
+    print("^2[INFO] Suchergebnisse empfangen:", json.encode(results))
+    SendNUIMessage({ type = "searchResultsMechanic", results = results })
+end)
+
+-- Mechanic Records
+
+RegisterNUICallback("getMechanicRecords", function(data, cb)
+    ESX.TriggerServerCallback("getMechanicRecords", function(result)
+        cb(result or {})
+    end, { citizenid = data.citizenid })
+end)
+
+-- Mechanic Notes
+
+RegisterNUICallback("getMechanicNotes", function(data, cb)
+    ESX.TriggerServerCallback("getMechanicNotes", function(result)
+        cb(result or {})
+    end, { citizenid = data.citizenid })
+end)
+
+-- Mechanic Notes Create
+
+RegisterNUICallback("createMechanicNote", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:createMechanicNote", function(success)
+        cb(success)
+    end, {
+        citizenid = data.citizenid,
+        title = data.title,
+        description = data.description,
+        created_by = GetPlayerName(PlayerId())
+    })
+end)
+
+-- Mechanic Notes Edit
+
+RegisterNUICallback("editMechanicNote", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:editMechanicNote", function(success)
+        cb(success)
+    end, { noteId = data.noteId, title = data.title, description = data.description })
+end)
+
+-- Mechanic Notes Delete
+
+RegisterNUICallback("deleteMechanicNote", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:deleteMechanicNote", function(success)
+        cb(success)
+    end, { noteId = data.noteId })
+end)
+
+-- Mechanic Contact Details
+
+RegisterNUICallback("getMechanicContactDetails", function(data, cb)
+    ESX.TriggerServerCallback("getMechanicContactDetails", function(result)
+        cb(result or {})
+    end, { citizenid = data.citizenid })
+end)
+
+-- Mechanic Record Create
+
+RegisterNUICallback("createMechanicRecord", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:createMechanicRecord", function(success)
+        cb(success)
+    end, {
+        citizenid = data.citizenid,
+        title = data.title,
+        description = data.description,
+        created_by = GetPlayerName(PlayerId())
+    })
+end)
+
+-- Mechanic Record Edit
+
+RegisterNUICallback("editMechanicRecord", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:editMechanicRecord", function(success)
+        cb(success)
+    end, { recordId = data.recordId, title = data.title, description = data.description })
+end)
+
+-- Mechanic Record Delete
+
+RegisterNUICallback("deleteMechanicRecord", function(data, cb)
+    ESX.TriggerServerCallback("netry_tablet:deleteMechanicRecord", function(success)
+        cb(success)
+    end, { recordId = data.recordId })
+end)
 
