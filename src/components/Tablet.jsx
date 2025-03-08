@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import "./Tablet.css"; 
+
 {/* POLICE */}
 import PoliceDashboard from "../pages/police/Dashboard";
 import Leitstelle from "../pages/police/Leitstelle";
@@ -11,6 +12,7 @@ import VehicleDetails from "../pages/police/VehicleDetails";
 import ReportManagement from "../pages/police/ReportManagement";
 import Statistics from "../pages/police/Statistics";
 import ApplicationOverview from "../pages/police/ApplicationOverview";
+
 {/* AMBULANCE */}
 import AmbulanceDashboard from "../pages/ambulance/MedicDashboard";
 import PatientSearch from "../pages/ambulance/PatientSearch";
@@ -18,6 +20,11 @@ import PatientDetails from "../pages/ambulance/PatientDetails";
 import KnowledgeBase from "../pages/ambulance/KnowledgeBase";
 import TrainingDashboard from "../pages/ambulance/TrainingDashboard";
 import EmployeeManagement from "../pages/ambulance/EmployeeManagement";
+
+{/* FIRE */}
+import FireDashboard from "../pages/fire/FireDashboard";
+import KnowledgeBaseFire from "../pages/fire/KnowledgeBaseFire";
+
 {/* MECHANIC */}
 import MechanicDashboard from "../pages/mechanic/Dashboard";
 import MechanicEmployees from "../pages/mechanic/MechanicEmployees";
@@ -30,6 +37,9 @@ import Sidebar from "../components/Sidebar";
 {/* Globale Variablen */}
 import GlobalListModule from "../pages/module/GlobalListModule";
 import EmployeeList from "../pages/module/GlobalEmployeeList";
+import DispatchCenter from "../pages/module/DispatchCenter";
+
+
 function Tablet() {
     const [isVisible, setIsVisible] = useState(false);
     const [job, setJob] = useState(null);
@@ -107,6 +117,14 @@ function Tablet() {
                         <Route path="/ambulance/knowledgebase" element={<KnowledgeBase />} />
                         <Route path="/ambulance/trainingdashboard" element={<TrainingDashboard />} />
                         <Route path="/ambulance/employee-management" element={<EmployeeManagement />} />
+
+                        {/* Fire */}
+                        <Route path="/fire/fireDashboard" element={<FireDashboard />} />
+                        <Route path="/ambulance/patientsearch" element={<PatientSearch />} />
+                        <Route path="/ambulance/patientdetails/:id" element={<PatientDetails />} />
+                        <Route path="/fire/knowledgebase" element={<KnowledgeBaseFire />} />
+                        
+
                         
                         {/* Mechaniker */}
                         <Route path="/mechanic/dashboard" element={<MechanicDashboard />} />
@@ -119,6 +137,7 @@ function Tablet() {
                         {/* Default */}
                         <Route path="/module/globallistmodule" element={<GlobalListModule />} />
                         <Route path="/module/globalemployeelist" element={<EmployeeList />} />
+                        <Route path="/module/dispatchcenter" element={<DispatchCenter />} />
                     </Routes>
                 </div>
             </div>

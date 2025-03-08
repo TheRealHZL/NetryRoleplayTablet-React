@@ -179,3 +179,119 @@ button:hover {
       grid-template-columns: 1fr;
   }
 }
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Hintergrund abdunkeln */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* 📌 Modal-Inhalt */
+.modal-content {
+  background: #ffffff;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 📌 Modal-Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #f1f1f1;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.modal-header h2 {
+  font-size: 22px;
+  color: #333;
+  margin: 0;
+}
+
+.modal-close {
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: bold;
+  color: #666;
+  background: none;
+  border: none;
+}
+
+.modal-close:hover {
+  color: #ff0000;
+}
+
+/* 📌 Modal-Body */
+.modal-body {
+  margin-bottom: 15px;
+}
+
+.modal-body input,
+.modal-body textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+/* 📌 Modal-Footer (Buttons) */
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.modal-footer button {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.modal-footer .btn-save {
+  background: #28a745;
+  color: white;
+}
+
+.modal-footer .btn-save:hover {
+  background: #218838;
+}
+
+.modal-footer .btn-cancel {
+  background: #dc3545;
+  color: white;
+}
+
+.modal-footer .btn-cancel:hover {
+  background: #c82333;
+}
+
+/* ✨ Animierte Modal-Öffnung */
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: scale(0.9);
+  }
+  to {
+      opacity: 1;
+      transform: scale(1);
+  }
+}

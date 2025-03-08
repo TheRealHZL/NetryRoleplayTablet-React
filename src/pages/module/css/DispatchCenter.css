@@ -1,0 +1,86 @@
+/* DispatchCenter.css */
+.dispatch-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    background: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .dispatch-container h1 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #d9534f;
+  }
+  
+  button {
+    padding: 8px 15px;
+    margin: 10px;
+    background-color: #5bc0de;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+  }
+  
+  button:hover {
+    background-color: #31b0d5;
+  }
+  
+  .add-form {
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .add-form p {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .add-form select, 
+  .add-form button {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .dispatch-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .dispatch-table th, 
+  .dispatch-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .dispatch-table th {
+    background: #d9534f;
+    color: white;
+  }
+  
+  .dispatch-table td select {
+    width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+  }
+  
+  .dispatch-table button {
+    background-color: #d9534f;
+  }
+  
+  .dispatch-table button:hover {
+    background-color: #c9302c;
+  }
+  

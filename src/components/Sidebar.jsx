@@ -25,6 +25,7 @@ const Sidebar = ({ job }) => {
     ],
     ambulance: [
       { name: "Dashboard", icon: faChartBar, route: "/ambulance/medicdashboard" },
+      { name: "Leitstelle", icon: faCar, route: "/module/dispatchcenterfiremedic" },
       { name: "Patientenakten", icon: faAmbulance, route: "/ambulance/PatientSearch" },
       { name: "Listen", icon: faCar, route: "/module/globallistmodule" },
       { name: "Knowledgebase", icon: faChartBar, route: "/ambulance/knowledgebase" },
@@ -36,6 +37,14 @@ const Sidebar = ({ job }) => {
       { name: "Listen", icon: faCar, route: "/module/globallistmodule" },
       { name: "Mitarbeiter", icon: faChartBar, route: "/module/globalemployeelist" },
     ],
+
+    fire: [
+      { name: "Dashboard", icon: faChartBar, route: "/fire/dashboard" },
+      { name: "Leitstelle", icon: faCar, route: "/module/dispatchcenterfiremedic" },
+      { name: "Listen", icon: faCar, route: "/module/globallistmodule" },
+      { name: "Mitarbeiter", icon: faChartBar, route: "/module/globalemployeelist" },
+      ],
+
     fsa: [
       { name: "Dashboard", icon: faChartBar, route: "/admin/dashboard" },
       { name: "Yaml Editor", icon: faChartBar, route: "/admin/yamleditor" },
