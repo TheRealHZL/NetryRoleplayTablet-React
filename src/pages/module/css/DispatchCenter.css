@@ -1,86 +1,141 @@
 /* DispatchCenter.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: #fff;
+}
+
 .dispatch-container {
-    max-width: 900px;
-    margin: auto;
-    padding: 20px;
-    background: #f4f4f4;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-  
-  .dispatch-container h1 {
-    font-size: 24px;
-    margin-bottom: 15px;
-    color: #d9534f;
-  }
-  
-  button {
-    padding: 8px 15px;
-    margin: 10px;
-    background-color: #5bc0de;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-  }
-  
-  button:hover {
-    background-color: #31b0d5;
-  }
-  
-  .add-form {
-    background: #fff;
+  width: 90%;
+  height: 90vh;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+button {
+  background: #ff5e57;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  margin: 10px 0;
+}
+
+button:hover {
+  background: #e74c3c;
+}
+
+.add-form {
+  width: 100%;
+  max-width: 500px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.add-form select, .add-form button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.add-form select {
+  cursor: pointer;
+}
+
+.dispatch-table {
+  width: 100%;
+  max-height: 60vh;
+  overflow-y: auto;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+}
+
+.dispatch-table thead {
+  background: #ff5e57;
+  color: white;
+  font-size: 18px;
+}
+
+.dispatch-table th, .dispatch-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dispatch-table th {
+  font-weight: bold;
+}
+
+.dispatch-table td select {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.dispatch-table button {
+  background: #ff5e57;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.dispatch-table button:hover {
+  background: #e74c3c;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dispatch-container {
+    height: auto;
     padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
   }
-  
-  .add-form p {
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-  
-  .add-form select, 
-  .add-form button {
-    width: 100%;
-    padding: 8px;
-    margin: 5px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
+
   .dispatch-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+    font-size: 14px;
   }
-  
-  .dispatch-table th, 
-  .dispatch-table td {
+
+  button {
+    font-size: 14px;
     padding: 10px;
-    border: 1px solid #ddd;
-    text-align: center;
   }
-  
-  .dispatch-table th {
-    background: #d9534f;
-    color: white;
-  }
-  
-  .dispatch-table td select {
-    width: 100%;
-    padding: 5px;
-    border-radius: 5px;
-  }
-  
-  .dispatch-table button {
-    background-color: #d9534f;
-  }
-  
-  .dispatch-table button:hover {
-    background-color: #c9302c;
-  }
-  
+}

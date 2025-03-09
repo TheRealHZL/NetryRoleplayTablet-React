@@ -3,56 +3,100 @@ import "./css/DispatchCenter.css";
 
 const DispatchCenter = () => {
   const [staff, setStaff] = useState([]);
-  const [statuses, setStatuses] = useState(["10-2", "10-5", "10-6", "10-8", "Off-Duty"]);
-  const [vehicles, setVehicles] = useState(["Ambulance", "NEF", "RTW", "Brush", "Engine"]);
-  const [units, setUnits] = useState(["Unit 1", "Unit 2", "Unit 3", "Unit 4", "Command"]);
-  const [roles, setRoles] = useState(["Innen-/Außendienst", "Dispatch", "Einsatzleitung", "Notarzt"]);
+  const [statuses] = useState(["10-2", "10-5", "10-6", "10-8", "Off-Duty"]);
+  const [vehicles] = useState(["Ambulance", "NEF", "RTW", "Brush", "Engine"]);
+  const [units] = useState(["Unit 1", "Unit 2", "Unit 3", "Unit 4", "Command"]);
+  const [roles] = useState(["Innen-/Außendienst", "Dispatch", "Einsatzleitung", "Notarzt"]);
   const [showForm, setShowForm] = useState(false);
-  const [newEntry, setNewEntry] = useState({ firstname: "", lastname: "", unit: "Unit 1", status: "10-2", role: "Innen-/Außendienst", vehicle: "Ambulance" });
+  const [newEntry, setNewEntry] = useState({ unit: "Unit 1", status: "10-2", role: "Innen-/Außendienst", vehicle: "Ambulance" });
   const [playerName, setPlayerName] = useState("");
 
+  // Fetch Staff + Player Name
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`https://${GetParentResourceName()}/getEMSStaff`);
-      const data = await response.json();
-      setStaff(data);
-    };
-    fetchData();
+      try {
+        const [staffRes, nameRes] = await Promise.all([
+          fetch(`https://${GetParentResourceName()}/getEMSStaff`).then(res => res.json()),
+          fetch(`https://${GetParentResourceName()}/getSpielerName`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          }).then(res => res.json()),
+        ]);
 
-    const fetchPlayerName = async () => {
-      const name = await getSpielerName();
-      setPlayerName(name);
+        setStaff(staffRes);
+        setPlayerName(nameRes);
+      } catch (error) {
+        console.error("Fehler beim Laden der Daten:", error);
+      }
     };
-    fetchPlayerName();
+
+    fetchData();
   }, []);
 
+  // Update Staff
   const handleUpdate = async (id, field, value) => {
-    await fetch(`https://${GetParentResourceName()}/updateEMSStaff`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, field, value }),
-    });
-    setStaff(staff.map((s) => (s.id === id ? { ...s, [field]: value } : s)));
+    try {
+      const response = await fetch(`https://${GetParentResourceName()}/updateEMSStaff`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, field, value }),
+      });
+
+      if (response.ok) {
+        setStaff(staff.map((s) => (s.id === id ? { ...s, [field]: value } : s)));
+      } else {
+        console.error("Fehler beim Aktualisieren des Eintrags.");
+      }
+    } catch (error) {
+      console.error("Fehler beim Aktualisieren:", error);
+    }
   };
 
+  // Add Staff
   const handleAddStaff = async () => {
-    const response = await fetch(`https://${GetParentResourceName()}/addEMSStaff`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...newEntry, firstname: playerName.split(" ")[0], lastname: playerName.split(" ")[1] }),
-    });
-    const newStaff = await response.json();
-    setStaff([...staff, newStaff]);
-    setShowForm(false);
+    if (!playerName.includes(" ")) {
+      console.error("Fehler: Spielername ungültig.");
+      return;
+    }
+
+    const [firstName, lastName] = playerName.split(" ");
+
+    try {
+      const response = await fetch(`https://${GetParentResourceName()}/addEMSStaff`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...newEntry, firstname: firstName, lastname: lastName }),
+      });
+
+      if (response.ok) {
+        const newStaff = await response.json();
+        setStaff([...staff, newStaff]);
+        setShowForm(false);
+      } else {
+        console.error("Fehler beim Hinzufügen.");
+      }
+    } catch (error) {
+      console.error("Fehler beim Hinzufügen:", error);
+    }
   };
 
+  // Remove Staff
   const handleRemoveStaff = async (id) => {
-    await fetch(`https://${GetParentResourceName()}/removeEMSStaff`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-    setStaff(staff.filter((s) => s.id !== id));
+    try {
+      const response = await fetch(`https://${GetParentResourceName()}/removeEMSStaff`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+
+      if (response.ok) {
+        setStaff(staff.filter((s) => s.id !== id));
+      } else {
+        console.error("Fehler beim Löschen des Eintrags.");
+      }
+    } catch (error) {
+      console.error("Fehler beim Löschen:", error);
+    }
   };
 
   return (
