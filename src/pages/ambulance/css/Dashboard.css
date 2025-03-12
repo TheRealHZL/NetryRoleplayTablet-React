@@ -1,120 +1,837 @@
-.medic-dashboard-container {
-  padding: 20px;
-  background-color: #2c2c2c;
-  color: #eaeaea;
-  font-family: "Arial", sans-serif;
+:root {
+  /* Hauptfarben */
+  --medic-primary: #2563eb;  /* Kräftiges Blau */
+  --medic-primary-light: #3b82f6;
+  --medic-primary-dark: #1d4ed8;
+  --medic-secondary: #0ea5e9;  /* Helles Blau */
+  --medic-accent: #f59e0b;  /* Orange für Akzente */
+  --medic-accent-light: #fbbf24;
+  
+  /* Status-Farben */
+  --medic-success: #10b981;  /* Grün */
+  --medic-success-light: #d1fae5;
+  --medic-processing: #6366f1;  /* Violett */
+  --medic-processing-light: #e0e7ff;
+  --medic-warning: #f59e0b;  /* Orange */
+  --medic-warning-light: #fef3c7;
+  --medic-error: #ef4444;  /* Rot */
+  --medic-error-light: #fee2e2;
+  --medic-completed: #8b5cf6;  /* Lila */
+  --medic-completed-light: #ede9fe;
+  
+  /* Neutralfarben */
+  --medic-background: #f9fafb;
+  --medic-surface: #ffffff;
+  --medic-border: #e5e7eb;
+  --medic-text-primary: #111827;
+  --medic-text-secondary: #6b7280;
+  --medic-text-disabled: #9ca3af;
+  
+  /* Schatten */
+  --medic-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --medic-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --medic-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Größen */
+  --medic-radius-sm: 6px;
+  --medic-radius-md: 8px;
+  --medic-radius-lg: 12px;
+  --medic-radius-xl: 16px;
+  
+  /* Animationen */
+  --medic-transition: all 0.2s ease-in-out;
+}
+
+/* Basis-Layout */
+.medic-dashboard {
+  background-color: var(--medic-background);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: var(--medic-text-primary);
   min-height: 100vh;
+  line-height: 1.5;
 }
 
-.dashboard-header {
-  text-align: center;
-  margin-bottom: 30px;
+.medic-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
-.dashboard-header h1 {
-  font-size: 2.5rem;
-  color: #4caf50;
+/* Moderner Header mit Glaseffekt */
+.medic-dashboard-header {
+  background: linear-gradient(135deg, var(--medic-primary), var(--medic-secondary));
+  padding: 1.5rem 0;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  border-radius: 0 0 var(--medic-radius-lg) var(--medic-radius-lg);
+  box-shadow: var(--medic-shadow-lg);
 }
 
-.dashboard-overview {
+.medic-dashboard-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='white' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+
+.medic-header-content {
+  position: relative;
+  z-index: 1;
   display: flex;
-  gap: 20px;
-  margin-bottom: 30px;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.overview-card {
-  flex: 1;
-  background: #2c2c3e;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.medic-header-title {
+  color: white;
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.025em;
 }
 
-.overview-card h2 {
-  margin-bottom: 10px;
-  color: #4caf50;
+.medic-header-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0.25rem 0 0 0;
+  font-size: 1rem;
 }
 
-/* Tabelle */
-.dashboard-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
+.medic-emoji {
+  font-size: 2rem;
+  margin-right: 0.75rem;
 }
 
-.dashboard-table th, .dashboard-table td {
-  text-align: left;
-  padding: 10px;
-  border-bottom: 1px solid #444;
+.medic-header-time {
+  text-align: right;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  padding: 0.75rem 1rem;
+  border-radius: var(--medic-radius-md);
+  box-shadow: var(--medic-shadow-sm);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.dashboard-table th {
-  background: #2c2c3e;
-  color: #4caf50;
+.medic-current-time {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
 }
 
-.dashboard-table tbody tr:hover {
-  background: #2c2c4e;
+.medic-current-date {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  font-size: 0.875rem;
 }
 
-.details-button {
-  background: #2196f3;
+/* Glasmorphismus Navigation */
+.medic-nav-container {
+  background: white;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--medic-shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-radius: var(--medic-radius-lg);
+}
+
+.medic-nav-tabs {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.medic-nav-tab {
+  background: transparent;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--medic-radius-md);
+  color: var(--medic-text-secondary);
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: var(--medic-transition);
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.medic-nav-tab:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+  color: var(--medic-text-primary);
+}
+
+.medic-nav-tab-active {
+  background-color: var(--medic-primary);
+  color: white;
+  box-shadow: var(--medic-shadow-sm);
+}
+
+.medic-nav-tab-active:hover {
+  background-color: var(--medic-primary-dark);
+  color: white;
+}
+
+.medic-nav-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 0.5rem;
+}
+
+/* Hauptbereich */
+.medic-main-content {
+  padding-bottom: 2rem;
+}
+
+/* Status-Karten mit Neomorphismus-Design */
+.medic-status-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.medic-status-card {
+  background: var(--medic-surface);
+  border-radius: var(--medic-radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--medic-shadow-md);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid var(--medic-border);
+  transition: var(--medic-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.medic-status-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--medic-shadow-lg);
+}
+
+.medic-status-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--medic-primary), var(--medic-secondary));
+  border-radius: 0 0 var(--medic-radius-lg) var(--medic-radius-lg);
+}
+
+.medic-status-icon-container {
+  background: linear-gradient(135deg, var(--medic-primary-light), var(--medic-primary));
+  color: white;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--medic-radius-md);
+}
+
+.medic-status-icon-emergency {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+}
+
+.medic-status-icon-active {
+  background: linear-gradient(135deg, #fb923c, #f97316);
+}
+
+.medic-status-icon-vehicle {
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+}
+
+.medic-status-icon-staff {
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+}
+
+.medic-status-card-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.medic-status-label {
+  font-size: 0.875rem;
+  color: var(--medic-text-secondary);
+  margin: 0;
+}
+
+.medic-status-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--medic-text-primary);
+  margin: 0;
+}
+
+/* Panel - Modulare Komponenten */
+.medic-panel {
+  background: var(--medic-surface);
+  border-radius: var(--medic-radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--medic-shadow-md);
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--medic-border);
+}
+
+.medic-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.medic-panel-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--medic-text-primary);
+}
+
+/* Buttons */
+.medic-primary-button {
+  background: var(--medic-primary);
   color: white;
   border: none;
-  padding: 5px 10px;
-  border-radius: 8px;
+  border-radius: var(--medic-radius-md);
+  padding: 0.6rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: var(--medic-transition);
+  display: flex;
+  align-items: center;
 }
 
-.details-button:hover {
-  background: #1976d2;
+.medic-primary-button:hover {
+  background: var(--medic-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+.medic-secondary-button {
+  background: transparent;
+  color: var(--medic-primary);
+  border: 1px solid var(--medic-primary);
+  border-radius: var(--medic-radius-md);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--medic-transition);
+}
+
+.medic-secondary-button:hover {
+  background: rgba(37, 99, 235, 0.05);
+  transform: translateY(-1px);
+}
+
+.medic-danger-button {
+  background: transparent;
+  color: var(--medic-error);
+  border: 1px solid var(--medic-error);
+  border-radius: var(--medic-radius-md);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--medic-transition);
+}
+
+.medic-danger-button:hover {
+  background: rgba(239, 68, 68, 0.05);
+  transform: translateY(-1px);
+}
+
+.medic-plus-icon {
+  font-size: 1.25rem;
+  margin-right: 0.375rem;
+  line-height: 1;
+}
+
+.medic-button-group {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Tabellen */
+.medic-table-container {
+  overflow-x: auto;
+  border-radius: var(--medic-radius-md);
+  border: 1px solid var(--medic-border);
+}
+
+.medic-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.medic-data-table thead {
+  background-color: #f9fafb;
+}
+
+.medic-data-table th {
+  text-align: left;
+  padding: 0.875rem 1rem;
+  font-weight: 600;
+  color: var(--medic-text-secondary);
+  border-bottom: 1px solid var(--medic-border);
+}
+
+.medic-data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--medic-border);
+  color: var(--medic-text-primary);
+}
+
+.medic-data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.medic-data-table tbody tr {
+  transition: var(--medic-transition);
+}
+
+.medic-data-table tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Status-Badges */
+.medic-status-badge, .medic-priority-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.medic-status-icon {
+  width: 12px;
+  height: 12px;
+  margin-right: 0.375rem;
+}
+
+.medic-status-default {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.medic-status-success {
+  background-color: var(--medic-success-light);
+  color: var(--medic-success);
+}
+
+.medic-status-processing {
+  background-color: var(--medic-processing-light);
+  color: var(--medic-processing);
+}
+
+.medic-status-warning {
+  background-color: var(--medic-warning-light);
+  color: var(--medic-warning);
+}
+
+.medic-status-error {
+  background-color: var(--medic-error-light);
+  color: var(--medic-error);
+}
+
+.medic-status-completed {
+  background-color: var(--medic-completed-light);
+  color: var(--medic-completed);
+}
+
+/* Priorität-Badges */
+.medic-priority-low {
+  background-color: var(--medic-success-light);
+  color: var(--medic-success);
+}
+
+.medic-priority-medium {
+  background-color: var(--medic-warning-light);
+  color: var(--medic-warning);
+}
+
+.medic-priority-high {
+  background-color: var(--medic-error-light);
+  color: var(--medic-error);
+}
+
+/* Zwei-Spalten-Layout */
+.medic-two-column {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Info-Karten */
+.medic-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.medic-info-card {
+  background-color: var(--medic-surface);
+  border-radius: var(--medic-radius-md);
+  padding: 1.25rem;
+  border: 1px solid var(--medic-border);
+  transition: var(--medic-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.medic-info-card:hover {
+  box-shadow: var(--medic-shadow-md);
+  transform: translateY(-2px);
+}
+
+.medic-info-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.medic-info-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.medic-emoji-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.medic-info-card-badge {
+  margin-top: 0.5rem;
 }
 
 /* Fahrzeugkarten */
-.vehicle-list {
+.medic-vehicle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.medic-vehicle-card {
+  background-color: var(--medic-surface);
+  border-radius: var(--medic-radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--medic-shadow-md);
+  border: 1px solid var(--medic-border);
+  transition: var(--medic-transition);
+}
+
+.medic-vehicle-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--medic-shadow-lg);
+}
+
+.medic-vehicle-card-header {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
 }
 
-.vehicle-card {
-  background: #3b3b3b;
-  padding: 15px;
-  border-radius: 8px;
-  width: 300px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+.medic-vehicle-card-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 0;
 }
 
-.vehicle-card h3 {
-  margin: 0 0 10px;
+.medic-vehicle-card-badge {
+  margin-bottom: 1.25rem;
 }
 
-.status-button {
-  background: #ff9800;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 8px;
+.medic-vehicle-card-status {
+  margin-bottom: 1.25rem;
+}
+
+.medic-vehicle-card-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Dropdown und Input Styling */
+.medic-status-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--medic-radius-md);
+  border: 1px solid var(--medic-border);
+  font-size: 0.875rem;
+  background-color: white;
+  color: var(--medic-text-primary);
+  transition: var(--medic-transition);
+  margin-top: 0.375rem;
   cursor: pointer;
 }
 
-.status-button:hover {
-  background: #e68a00;
+.medic-status-select:focus {
+  outline: none;
+  border-color: var(--medic-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* Kalenderkarten */
-.calendar-list {
+/* Filter-Tabs */
+.medic-filter-tabs {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.5rem;
 }
 
-.calendar-card {
-  background: #2c2c3e;
-  padding: 15px;
-  border-radius: 8px;
-  width: 300px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+.medic-filter-tab {
+  background: transparent;
+  border: 1px solid var(--medic-border);
+  padding: 0.5rem 1rem;
+  border-radius: var(--medic-radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--medic-text-secondary);
+  cursor: pointer;
+  transition: var(--medic-transition);
+  white-space: nowrap;
+}
+
+.medic-filter-tab:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  color: var(--medic-text-primary);
+}
+
+.medic-filter-tab-active {
+  background-color: var(--medic-primary);
+  color: white;
+  border-color: var(--medic-primary);
+}
+
+.medic-filter-tab-active:hover {
+  background-color: var(--medic-primary-dark);
+  color: white;
+}
+
+/* Staff Profile */
+.medic-staff-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.medic-staff-avatar {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--medic-primary), var(--medic-secondary));
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.medic-staff-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.medic-staff-name {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--medic-text-primary);
+}
+
+.medic-staff-role {
+  font-size: 0.75rem;
+  color: var(--medic-text-secondary);
+}
+
+.medic-staff-shift {
+  background-color: rgba(0, 0, 0, 0.04);
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--medic-radius-md);
+  font-size: 0.75rem;
+  color: var(--medic-text-secondary);
+}
+
+/* Kalender */
+.medic-calendar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.medic-calendar-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--medic-surface);
+  border-radius: var(--medic-radius-md);
+  border: 1px solid var(--medic-border);
+  transition: var(--medic-transition);
+}
+
+.medic-calendar-item:hover {
+  box-shadow: var(--medic-shadow-sm);
+}
+
+.medic-calendar-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.medic-calendar-date {
+  font-size: 0.75rem;
+  color: var(--medic-text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.medic-calendar-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--medic-text-primary);
+}
+
+.medic-calendar-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Leer-Zustände und Loading */
+.medic-no-data {
+  text-align: center;
+  padding: 2rem;
+  color: var(--medic-text-secondary);
+  font-size: 0.875rem;
+}
+
+.medic-loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--medic-background);
+}
+
+.medic-loading-content {
+  text-align: center;
+}
+
+.medic-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(37, 99, 235, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--medic-primary);
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.medic-loading-text {
+  color: var(--medic-text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Responsives Design */
+@media (max-width: 768px) {
+  .medic-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .medic-header-time {
+    margin-top: 1rem;
+    align-self: flex-start;
+  }
+
+  .medic-two-column {
+    grid-template-columns: 1fr;
+  }
+
+  .medic-status-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .medic-panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .medic-nav-tabs {
+    justify-content: flex-start;
+  }
+
+  .medic-calendar-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .medic-calendar-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* Elegant Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --medic-background: #111827;
+    --medic-surface: #1f2937;
+    --medic-border: #374151;
+    --medic-text-primary: #f9fafb;
+    --medic-text-secondary: #9ca3af;
+    --medic-text-disabled: #6b7280;
+  }
+
+  .medic-data-table thead {
+    background-color: #1a202c;
+  }
+
+  .medic-status-default {
+    background-color: #374151;
+    color: #9ca3af;
+  }
+
+  .medic-nav-tab:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .medic-data-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+
+  .medic-filter-tab:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .medic-staff-shift {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
 }
