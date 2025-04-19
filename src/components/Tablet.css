@@ -3,14 +3,28 @@
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;
-    color: rgba(71, 71, 71, 0.87);
+    color: rgba(255, 255, 255, 0.87);
     background-color: transparent !important; 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    
+    /* Farben und Variablen für den Rettungsdienst */
+    --ems-primary: #c32121;
+    --ems-secondary: #282c34;
+    --ems-accent: #d32f2f;
+    --ems-text: #ffffff;
+    --ems-hover: #b71c1c;
+    --ems-header: #212529;
 }
 
+/* Job-Farben für Sidebar-Headers */
+.job-police { --job-color: #2563eb; }
+.job-ambulance { --job-color: var(--ems-primary); }
+.job-mechanic { --job-color: #eab308; }
+.job-fire { --job-color: #b91c1c; }
+.job-admin { --job-color: #8b5cf6; }
 
 html, body {
     margin: 0;
@@ -37,7 +51,7 @@ body:not(.tablet-open) {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.0); /* Komplett transparent */
+    background: rgba(0, 0, 0, 0.5); /* Leicht dunkler Hintergrund für besseren Kontrast */
     display: none; /* Versteckt das Tablet, wenn es nicht benutzt wird */
     justify-content: center;
     align-items: center;
@@ -67,17 +81,163 @@ body:not(.tablet-open) .tablet-overlay {
     display: flex;
     width: 80%;
     height: 80%;
-    background: #404040;
+    background: #333333;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border: 2px solid #000000;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background: var(--ems-secondary);
+    color: var(--ems-text);
+    display: flex;
+    flex-direction: column;
+    padding-top: 0; /* Kein Padding oben */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Sidebar Header (Jobname) */
+.sidebar .job-header {
+    background-color: var(--job-color, var(--ems-primary));
+    color: white;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.sidebar .job-header .job-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar .job-header .job-name {
+    flex-grow: 1;
+}
+
+.sidebar .job-header .toggle-sidebar {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.sidebar .job-header .toggle-sidebar:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Logo-Container */
+.logo-container {
+    margin-bottom: 0;
+    text-align: center;
+    padding: 15px 0;
+}
+
+.logo {
+    width: 60px;
+    height: 60px;
+    background: #34495E; /* Dunkelblau, passend zur Sidebar */
+    border-radius: 50%; /* Vollständig rund */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px; /* Größere Schrift */
+    color: #FFFFFF;
+    font-weight: bold;
+    margin: 0 auto 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Menü */
+.menu {
+    flex-grow: 1;
+    width: 100%;
+    padding: 10px 0;
+    overflow-y: auto;
+}
+
+/* Verbesserte Menüelemente */
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 20px;
+    margin: 5px 10px;
+    text-decoration: none;
+    color: var(--ems-text);
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 8px;
+    background: transparent;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.menu-item.active {
+    background: var(--ems-accent);
+    color: white;
+}
+
+.menu-item .icon {
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    padding: 15px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    background-color: var(--job-color, var(--ems-primary));
 }
 
 /* Inhalt des Tablets */
 .tablet-content {
     flex-grow: 1;
-    padding: 20px;
+    padding: 0;
     overflow-y: auto;
+    background-color: #2a2a2a;
+    color: white;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.tablet-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tablet-content::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.tablet-content::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 /* Schließen-Button */
@@ -85,10 +245,227 @@ body:not(.tablet-open) .tablet-overlay {
     position: absolute;
     top: 20px;
     right: 20px;
-    background: red;
+    background: #c32121;
     color: white;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+    z-index: 1100;
+}
+
+.close-btn:hover {
+    background: #a11c1c;
+    transform: translateY(-2px);
+}
+
+.close-btn:active {
+    transform: translateY(0);
+}
+
+/* Gemeinsame Komponenten-Stile */
+
+/* Header für Seitenkomponenten */
+.page-header {
+    background-color: var(--ems-header);
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.page-header .header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* EMS Leitstelle Stile */
+.dispatch-container {
+    padding: 15px;
+}
+
+.stat-card {
+    background-color: #3a3a3a;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.emergency-card {
+    background-color: #3a3a3a;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--ems-accent);
+}
+
+.priority-hoch {
+    border-left-color: #c32121;
+}
+
+.priority-mittel {
+    border-left-color: #ff9800;
+}
+
+.emergency-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+/* Buttons und Formularelemente */
+button, 
+input[type="submit"], 
+input[type="button"] {
+    background-color: var(--ems-accent);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+button:hover, 
+input[type="submit"]:hover, 
+input[type="button"]:hover {
+    background-color: var(--ems-hover);
+}
+
+input[type="text"], 
+input[type="search"], 
+input[type="date"], 
+select, 
+textarea {
+    background-color: #444;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 8px 12px;
+    color: white;
+    width: 100%;
+}
+
+input:focus, 
+select:focus, 
+textarea:focus {
+    outline: none;
+    border-color: var(--ems-accent);
+    box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.2);
+}
+
+/* Tabellen */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+thead {
+    background-color: #333;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #444;
+}
+
+th {
+    font-weight: 600;
+}
+
+tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Karten und Container */
+.card {
+    background-color: #3a3a3a;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #444;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* Benachrichtigungen */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    background-color: #333;
+    color: white;
+    border-left: 4px solid var(--ems-accent);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1200;
+    animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive Anpassungen */
+@media (max-width: 1024px) {
+    .tablet-container {
+        width: 95%;
+        height: 90%;
+    }
+}
+
+@media (max-width: 768px) {
+    .tablet-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+    
+    .menu {
+        padding: 5px 0;
+    }
+    
+    .menu-item {
+        margin: 2px 5px;
+        padding: 10px 15px;
+    }
 }

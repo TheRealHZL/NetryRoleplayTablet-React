@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import "./Tablet.css"; 
 
-{/* POLICE */}
+// POLICE
 import PoliceDashboard from "../pages/police/Dashboard";
 import Leitstelle from "../pages/police/Leitstelle";
 import PersonSearch from "../pages/police/PersonSearch";
@@ -13,7 +13,7 @@ import ReportManagement from "../pages/police/ReportManagement";
 import Statistics from "../pages/police/Statistics";
 import ApplicationOverview from "../pages/police/ApplicationOverview";
 
-{/* AMBULANCE */}
+// AMBULANCE
 import AmbulanceDashboard from "../pages/ambulance/MedicDashboard";
 import PatientSearch from "../pages/ambulance/PatientSearch";
 import PatientDetails from "../pages/ambulance/PatientDetails";
@@ -21,20 +21,20 @@ import KnowledgeBase from "../pages/ambulance/KnowledgeBase";
 import TrainingDashboard from "../pages/ambulance/TrainingDashboard";
 import EmployeeManagement from "../pages/ambulance/EmployeeManagement";
 
-{/* FIRE */}
+// FIRE
 import FireDashboard from "../pages/fire/FireDashboard";
 import KnowledgeBaseFire from "../pages/fire/KnowledgeBaseFire";
 
-{/* MECHANIC */}
+// MECHANIC
 import MechanicDashboard from "../pages/mechanic/Dashboard";
 import MechanicEmployees from "../pages/mechanic/MechanicEmployees";
 
-{/* ADMIN */}
+// ADMIN
 import AdminDashboard from "../pages/admin/Dashboard";
 import YamlEditor from "../pages/admin/YamlEditor";
 import Sidebar from "../components/Sidebar";
 
-{/* Globale Variablen */}
+// MODULES
 import GlobalListModule from "../pages/module/GlobalListModule";
 import EmployeeList from "../pages/module/GlobalEmployeeList";
 import DispatchCenter from "../pages/module/DispatchCenter";
@@ -119,7 +119,7 @@ function Tablet() {
                         <Route path="/ambulance/employee-management" element={<EmployeeManagement />} />
 
                         {/* Fire */}
-                        <Route path="/fire/fireDashboard" element={<FireDashboard />} />
+                        <Route path="/fire/dashboard" element={<FireDashboard />} />
                         <Route path="/ambulance/patientsearch" element={<PatientSearch />} />
                         <Route path="/ambulance/patientdetails/:id" element={<PatientDetails />} />
                         <Route path="/fire/knowledgebase" element={<KnowledgeBaseFire />} />

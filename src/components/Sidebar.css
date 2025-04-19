@@ -1,98 +1,228 @@
-.sidebar {
+/* Modernes Sidebar Design mit berufsabhängigen Farbschemata */
+
+.sidebar-new {
   width: 260px;
-  height: 100vh;
-  background: #2C3E50; /* Moderner dunkelblauer Hintergrund */
-  color: #ECF0F1; /* Helles Grau für Text */
+  height: 100%;
   display: flex;
   flex-direction: column;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: var(--sidebar-bg, #262d36);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  color: white;
+}
+
+/* Kompakte Version der Sidebar */
+.sidebar-new.collapsed {
+  width: 70px;
+}
+
+/* Sidebar Header mit Logo und Toggle */
+.sidebar-header {
+  height: 70px;
+  display: flex;
   align-items: center;
-  padding-top: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25); /* Subtilerer Schatten */
+  padding: 0 15px;
+  position: relative;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.logo-container {
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.logo {
-  width: 80px;
-  height: 80px;
-  background: #34495E; /* Dunkelblau, passend zur Sidebar */
-  border-radius: 50%; /* Vollständig rund */
+/* Logo-Bereich */
+.sidebar-logo {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 28px; /* Größere Schrift */
-  color: #FFFFFF;
-  font-weight: bold;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  font-size: 20px;
+  flex-shrink: 0;
 }
 
-.menu {
+/* Titel */
+.sidebar-title {
+  margin: 0 0 0 15px;
+  font-size: 18px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
   flex-grow: 1;
-  width: 100%;
-  padding: 10px 0;
 }
 
-.menu-item {
+/* Toggle-Button für Sidebar-Kollaps */
+.sidebar-toggle {
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 12px 20px;
-  margin: 8px 20px;
-  text-decoration: none;
-  color: inherit; /* Verwendet die Haupttextfarbe */
-  font-size: 16px;
-  font-weight: 500;
-  border-radius: 10px;
-  background: transparent;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  justify-content: center;
+  transition: background-color 0.2s;
 }
 
-.menu-item:hover {
-  background: #1ABC9C; /* Heller, auffälliger Türkis-Ton */
-  color: #ffffff; /* Weißer Text beim Hover */
-  transform: scale(1.05); /* Leicht vergrößern */
+.sidebar-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
-.menu-item .icon {
-  font-size: 24px;
+/* Navigation */
+.sidebar-menu {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 15px 0;
 }
 
-.logout {
-  width: 100%;
-  padding: 20px;
-  background: #34495E; /* Passend zum Logo-Hintergrund */
-  text-align: center;
-  border-top: 1px solid #4A6572; /* Dunkelgrau-Blau für den Rand */
-}
-
-.logout-button {
-  width: 90%;
-  padding: 14px;
-  background: #E74C3C; /* Rotes Highlight */
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.logout-button:hover {
-  background: #C0392B; /* Dunkleres Rot */
-  transform: scale(1.05); /* Leicht vergrößern */
-}
-
-ul {
+.sidebar-menu ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-li {
-  width: 100%;
+/* Menu-Item */
+.sidebar-menu-item {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  margin: 5px 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s;
+  position: relative;
+}
+
+/* Menu-Item Hover-Effekt */
+.sidebar-menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Aktives Menu-Item */
+.sidebar-menu-item.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Icon im Menu-Item */
+.sidebar-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 15px;
+}
+
+.sidebar-version {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+/* Tooltip für kompakte Sidebar */
+.sidebar-tooltip {
+  position: absolute;
+  left: 70px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 10;
+}
+
+.sidebar-menu-item:hover .sidebar-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Scrollbar Styling */
+.sidebar-menu::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.sidebar-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Berufsspezifische Farbgebung */
+.sidebar-police {
+  --sidebar-accent-color: #3b82f6;
+  background: linear-gradient(180deg, #1e3a8a 0%, #2563eb 100%);
+}
+
+.sidebar-ambulance {
+  --sidebar-accent-color: #ef4444;
+  background: linear-gradient(180deg, #991b1b 0%, #dc2626 100%);
+}
+
+.sidebar-mechanic {
+  --sidebar-accent-color: #f59e0b;
+  background: linear-gradient(180deg, #92400e 0%, #d97706 100%);
+}
+
+.sidebar-fire {
+  --sidebar-accent-color: #ef4444;
+  background: linear-gradient(180deg, #7f1d1d 0%, #dc2626 100%);
+}
+
+.sidebar-admin {
+  --sidebar-accent-color: #8b5cf6;
+  background: linear-gradient(180deg, #5b21b6 0%, #8b5cf6 100%);
+}
+
+/* Animationen */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.sidebar-logo {
+  animation: pulse 3s infinite ease-in-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar-new {
+    position: absolute;
+    z-index: 100;
+    height: 100%;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sidebar-new.collapsed {
+    transform: translateX(-100%);
+  }
 }
