@@ -11,17 +11,42 @@ files {
     'html/**/*'
 }
 
-client_scripts {
-    'client.lua'
-}
 
-server_scripts {
-    'server.lua',
-    '@oxmysql/lib/MySQL.lua',
-    '@netry-lib/imports.lua'
-
+dependencies {
+	'qtm-lib',
+	'ox_lib',
+	'oxmysql',
 }
 
 lua54 'yes'
 
-dependency 'oxmysql'
+client_scripts {
+    'client.lua',
+
+    'modules/dispatchcenter/cl_dc.lua',
+    'modules/ambulance/cl_medic.lua',
+    'modules/police/cl_police.lua',
+    'modules/fire/cl_fire.lua',
+    'modules/mechanic/cl_mechanic.lua'
+}
+
+
+server_scripts {
+    'server.lua',
+
+    'modules/dispatchcenter/sv_dc.lua',
+    'modules/ambulance/sv_medic.lua',
+    'modules/police/sv_police.lua',
+    'modules/fire/sv_fire.lua',
+    'modules/mechanic/sv_mechanic.lua'
+}
+
+shared_script {
+    '@ox_lib/init.lua',
+    '@qtm-lib/imports.lua',
+    '@netry-lib/imports.lua',
+    '@oxmysql/lib/MySQL.lua'
+}
+
+
+
